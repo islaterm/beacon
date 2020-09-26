@@ -20,3 +20,7 @@ def get_module_functions(module) -> List[Callable]:
     members = getmembers(module)
 
     return [fun[1] for fun in filter(lambda m: isinstance(m[1], FunctionType), members)]
+
+
+def generate_individual():
+    pass
