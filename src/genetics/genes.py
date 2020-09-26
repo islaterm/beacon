@@ -11,7 +11,12 @@ from typing import Dict, Generic, TypeVar
 DNA = TypeVar("DNA")
 
 
-class Gene(Generic[DNA]):
+class DNAException(Exception):
+    def __init__(self, msg: str):
+        super(DNAException, self).__init__(msg)
+
+
+class GenericGene(Generic[DNA]):
     """ A gene is the more basic unit of a genotype.    """
     __alphabet: Dict[str, DNA]
     __dna: DNA
@@ -21,15 +26,17 @@ class Gene(Generic[DNA]):
         """ Creates a random gene from a DNA alphabet.  """
         self.__alphabet = alphabet
         self.__key = key if key else random.choice(list(alphabet.keys()))
-        self.__dna = alphabet[self.__key]
+        try:
+            self.__dna = alphabet[self.__key]
+        except KeyError:
+            raise DNAException(f"{self.__key} is not part of the alphabet {alphabet}")
 
-    def copy(self) -> 'Gene[DNA]':
+    def copy(self) -> 'GenericGene[DNA]':
         """ Returns a copy of this gene.    """
-        return Gene(self.__alphabet, self.__key)
+        return GenericGene(self.__alphabet, self.__key)
 
-
-class Chromosome:
-    """ A chromosome made from a sequence of objects.   """
-
-    def __init__(self, alphabet: Dict[str, DNA]):
-        pass
+    def copy_to(self, other: 'GenericGene[DNA]') -> None:
+        """ Copies the DNA of this gene into another.   """
+        other.__dna = self.__dna
+        other.__key = self.__key
+        other.__alphabet = self.__alphabet
