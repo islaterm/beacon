@@ -6,7 +6,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
-from typing import Dict, Generic, TypeVar
+from typing import Any, Dict, Generic, TypeVar
 
 DNA = TypeVar("DNA")
 
@@ -22,14 +22,17 @@ class GenericGene(Generic[DNA]):
     __dna: DNA
     __key: str
 
-    def __init__(self, alphabet: Dict[str, DNA], key: str = ""):
+    def __init__(self, alphabet: Dict[Any, DNA], key: str = ""):
         """ Creates a random gene from a DNA alphabet.  """
-        self.__alphabet = alphabet
-        self.__key = key if key else random.choice(list(alphabet.keys()))
-        try:
-            self.__dna = alphabet[self.__key]
-        except KeyError:
-            raise DNAException(f"{self.__key} is not part of the alphabet {alphabet}")
+        if alphabet:
+            self.__alphabet = alphabet
+            self.__key = key if key else random.choice(list(alphabet.keys()))
+            try:
+                self.__dna = alphabet[self.__key]
+            except KeyError:
+                raise DNAException(f"{self.__key} is not part of the alphabet {alphabet}")
+        else:
+            raise DNAException("Alphabet cannot be empty.")
 
     def copy(self) -> 'GenericGene[DNA]':
         """ Returns a copy of this gene.    """
