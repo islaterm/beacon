@@ -22,11 +22,12 @@ class GenericGene(Generic[DNA]):
     __dna: DNA
     __key: str
 
-    def __init__(self, alphabet: Dict[Any, DNA], key: str = ""):
+    def __init__(self, alphabet: Dict[Any, DNA], key: str = "",
+                 rng: random.Random = random.Random()):
         """ Creates a random gene from a DNA alphabet.  """
         if alphabet:
             self.__alphabet = alphabet
-            self.__key = key if key else random.choice(list(alphabet.keys()))
+            self.__key = key if key else rng.choice(list(alphabet.keys()))
             try:
                 self.__dna = alphabet[self.__key]
             except KeyError:
@@ -34,6 +35,14 @@ class GenericGene(Generic[DNA]):
         else:
             raise DNAException("Alphabet cannot be empty.")
 
+    # region : Properties
+    @property
+    def dna(self):
+        return self.__dna
+
+    # endregion
+
+    # region : Utility
     def copy(self) -> 'GenericGene[DNA]':
         """ Returns a copy of this gene.    """
         return GenericGene(self.__alphabet, self.__key)
@@ -43,3 +52,4 @@ class GenericGene(Generic[DNA]):
         other.__dna = self.__dna
         other.__key = self.__key
         other.__alphabet = self.__alphabet
+    # endregion
