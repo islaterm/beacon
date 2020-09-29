@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- (B.6) Test for ASCII gene
 - (B.5) Test for binary gene
 - (B.4) Test for gene with empty alphabet
 - (B.3) Implemented gene's copy functions
