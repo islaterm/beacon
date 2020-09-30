@@ -18,7 +18,7 @@ class DNAException(Exception):
 
 class GenericGene(Generic[DNA]):
     """ A gene is the more basic unit of a genotype.    """
-    __alphabet: Dict[str, DNA]
+    __alphabet: Dict[Any, DNA]
     __dna: DNA
     __key: str
 
@@ -38,6 +38,7 @@ class GenericGene(Generic[DNA]):
     # region : Properties
     @property
     def dna(self):
+        """ The content of this gene.   """
         return self.__dna
 
     # endregion
