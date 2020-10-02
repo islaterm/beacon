@@ -44,7 +44,7 @@ class GenericGene(Generic[DNA]):
     # endregion
 
     # region : Utility
-    def copy(self) -> 'GenericGene[DNA]':
+    def __copy__(self) -> 'GenericGene[DNA]':
         """ Returns a copy of this gene.    """
         return GenericGene(self.__alphabet, self.__key)
 

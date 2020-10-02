@@ -12,7 +12,7 @@ from typing import Dict
 
 import pytest
 
-from src.genetics.genes import DNAException, GenericGene
+from genetics.genes import DNAException, GenericGene
 
 
 def test_empty_gene(empty_alphabet_error_msg: str) -> None:

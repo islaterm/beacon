@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- (B.8) Test for empty chromosome
 - (B.7) Implemented chromosome class and mutation method
 - (B.6) Test for ASCII gene
 - (B.5) Test for binary gene
