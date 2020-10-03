@@ -22,16 +22,22 @@ def test_size_mismatch_chromosome(binary_alphabet: Dict, size_mismatch_error_msg
 
 
 def test_binary_chromosome(binary_alphabet: Dict, binary_chromosome: GenericChromosome,
-                           random_seed: int) -> None:
+                           chromosome_size: int, random_seed: int) -> None:
     rng = Random(random_seed)
-    expected_chromosome = GenericChromosome(rng.randint(0, 100), binary_alphabet, rng)
+    expected_chromosome = GenericChromosome(chromosome_size, binary_alphabet, rng)
     assert expected_chromosome == binary_chromosome
 
 
 @pytest.fixture()
-def binary_chromosome(binary_alphabet: Dict[bool, int], random_seed: int) -> GenericChromosome:
-    rng = Random(random_seed)
-    return GenericChromosome(rng.randint(0, 100), binary_alphabet, rng)
+def binary_chromosome(binary_alphabet: Dict[bool, int], chromosome_size: int,
+                      random_seed: int) -> GenericChromosome:
+    chromosome_rng = Random(random_seed)
+    return GenericChromosome(chromosome_size, binary_alphabet, chromosome_rng)
+
+
+@pytest.fixture()
+def chromosome_size():
+    return random.randint(0, 100)
 
 
 @pytest.fixture()

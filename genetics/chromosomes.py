@@ -32,7 +32,7 @@ class GenericChromosome(Generic[DNA]):
         self.__alphabet = alphabet
         self.__rng = rng
         self.__size = size
-        self.__genes = genes if genes else [GenericGene(alphabet) for _ in range(0, size)]
+        self.__genes = genes if genes else [GenericGene(alphabet, rng=rng) for _ in range(0, size)]
         if len(self.__genes) != self.__size:
             raise GenotypeException("Chromosome size doesn't match the number of genes.\n"
                                     f"Expected: {size}\n"
@@ -48,6 +48,11 @@ class GenericChromosome(Generic[DNA]):
     def __copy__(self):
         genes_copy = [copy(gene) for gene in self.__genes]
         return GenericChromosome(self.__size, self.__alphabet, genes=genes_copy)
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other,
+                          GenericChromosome) and other.__alphabet == self.__alphabet and \
+               other.__genes == self.__genes
 
     def __len__(self):
         return self.__size

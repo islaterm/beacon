@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- (B.11) Fixed binary chromosome creation
 - (B.10) Failing test for binary chromosome
 - (B.9) Test for mismatching size in chromosome
 - (B.8) Test for empty chromosome

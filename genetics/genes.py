@@ -48,6 +48,17 @@ class GenericGene(Generic[DNA]):
         """ Returns a copy of this gene.    """
         return GenericGene(self.__alphabet, self.__key)
 
+    def __eq__(self, other) -> bool:
+        return isinstance(other,
+                          GenericGene) and other.__alphabet == self.__alphabet and other.__key == \
+               self.__key and other.__dna == self.__dna
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+    def __str__(self) -> str:
+        return f"{str(self.__key)}: {str(self.__dna)}"
+
     def copy_to(self, other: 'GenericGene[DNA]') -> None:
         """ Copies the DNA of this gene into another.   """
         other.__dna = self.__dna
