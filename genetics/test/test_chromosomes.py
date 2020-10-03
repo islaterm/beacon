@@ -1,5 +1,7 @@
+import random
 import string
 import unittest
+from random import Random
 from typing import Dict
 
 import pytest
@@ -19,6 +21,19 @@ def test_size_mismatch_chromosome(binary_alphabet: Dict, size_mismatch_error_msg
         assert size_mismatch_error_msg in genotype_error.value
 
 
+def test_binary_chromosome(binary_alphabet: Dict, binary_chromosome: GenericChromosome,
+                           random_seed: int) -> None:
+    rng = Random(random_seed)
+    expected_chromosome = GenericChromosome(rng.randint(0, 100), binary_alphabet, rng)
+    assert expected_chromosome == binary_chromosome
+
+
+@pytest.fixture()
+def binary_chromosome(binary_alphabet: Dict[bool, int], random_seed: int) -> GenericChromosome:
+    rng = Random(random_seed)
+    return GenericChromosome(rng.randint(0, 100), binary_alphabet, rng)
+
+
 @pytest.fixture()
 def binary_alphabet() -> Dict[bool, int]:
     return { True: 1, False: 0 }
@@ -27,6 +42,11 @@ def binary_alphabet() -> Dict[bool, int]:
 @pytest.fixture()
 def ascii_alphabet() -> Dict[int, str]:
     return dict([n for n in enumerate(string.ascii_letters)])
+
+
+@pytest.fixture()
+def random_seed():
+    return random.randint(-50, 50)
 
 
 @pytest.fixture()
