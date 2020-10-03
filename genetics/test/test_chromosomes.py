@@ -21,6 +21,7 @@ def test_size_mismatch_chromosome(binary_alphabet: Dict, size_mismatch_error_msg
         assert size_mismatch_error_msg in genotype_error.value
 
 
+@pytest.mark.repeat(100)
 def test_binary_chromosome(binary_alphabet: Dict, binary_chromosome: GenericChromosome,
                            chromosome_size: int, random_seed: int) -> None:
     rng = Random(random_seed)
@@ -28,11 +29,26 @@ def test_binary_chromosome(binary_alphabet: Dict, binary_chromosome: GenericChro
     assert expected_chromosome == binary_chromosome
 
 
+@pytest.mark.repeat(100)
+def test_ascii_chromosome(ascii_alphabet: Dict, ascii_chromosome: GenericChromosome,
+                          chromosome_size: int, random_seed: int) -> None:
+    rng = Random(random_seed)
+    expected_chromosome = GenericChromosome(chromosome_size, ascii_alphabet, rng)
+    assert expected_chromosome == ascii_chromosome
+
+
 @pytest.fixture()
 def binary_chromosome(binary_alphabet: Dict[bool, int], chromosome_size: int,
                       random_seed: int) -> GenericChromosome:
     chromosome_rng = Random(random_seed)
     return GenericChromosome(chromosome_size, binary_alphabet, chromosome_rng)
+
+
+@pytest.fixture()
+def ascii_chromosome(ascii_alphabet: Dict[bool, int], chromosome_size: int,
+                     random_seed: int) -> GenericChromosome:
+    chromosome_rng = Random(random_seed)
+    return GenericChromosome(chromosome_size, ascii_alphabet, chromosome_rng)
 
 
 @pytest.fixture()
