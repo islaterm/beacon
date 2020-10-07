@@ -5,9 +5,10 @@ Creative Commons Attribution 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
+import random
 from copy import copy
 from random import Random
-from typing import Any, Dict, Generic, List, Optional
+from typing import Any, Dict, Generic, List, Optional, Tuple
 
 from genetics.genes import DNA, GenericGene
 
@@ -62,4 +63,34 @@ class GenericChromosome(Generic[DNA]):
 
     def __str__(self):
         return str(self.__genes)
+
     # endregion
+    def crossover(self, other: 'GenericChromosome') \
+            -> Tuple['GenericChromosome', 'GenericChromosome']:
+        """
+        Performs a crossover with another chromosome.
+
+        Args:
+            other: the chromosome to be used for crossover.
+        Returns:
+            A pair with the offsprings generated in the crossover.
+        """
+        max_cuts = min(self.__size, other.__size)
+        number_of_cuts = random.randint(0, max_cuts)
+        mixing_points = [random.randint(0, max_cuts) for _ in range(0, number_of_cuts)]
+        mixing_points.sort()
+        offsprings = (self.__copy__(), other.__copy__())    # FIXME: There's a bug here!
+        i = 0
+        start = 0
+        while i < len(mixing_points):
+            end = mixing_points[i]
+            for gene_idx in range(start, end):
+                if i % 2 == 0:
+                    offsprings[0][gene_idx] = copy(other.__genes[gene_idx])
+                    offsprings[1][gene_idx] = copy(self.__genes[gene_idx])
+                else:
+                    offsprings[0][gene_idx] = copy(self.__genes[gene_idx])
+                    offsprings[1][gene_idx] = copy(other.__genes[gene_idx])
+            start = end
+            i += 1
+        return offsprings

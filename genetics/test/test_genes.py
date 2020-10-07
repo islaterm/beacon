@@ -8,6 +8,7 @@ work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 import random
 import string
 import unittest
+from copy import copy
 from typing import Dict
 
 import pytest
@@ -15,6 +16,7 @@ import pytest
 from genetics.genes import DNAException, GenericGene
 
 
+# region : Constructor tests
 def test_empty_gene(empty_alphabet_error_msg: str) -> None:
     with pytest.raises(DNAException) as dna_error:
         _ = GenericGene({ })
@@ -29,12 +31,23 @@ def test_binary_gene(binary_gene: GenericGene[int], binary_alphabet: Dict[bool, 
 
 
 @pytest.mark.repeat(100)
-def test_ascii_gene(ascii_gene: GenericGene[int], ascii_alphabet: Dict[bool, int],
+def test_ascii_gene(ascii_gene: GenericGene[str], ascii_alphabet: Dict[bool, str],
                     random_seed: int) -> None:
     rng = random.Random(random_seed)
     assert ascii_gene.dna == ascii_alphabet[rng.choice(list(ascii_alphabet.keys()))]
 
 
+# endregion
+
+# region : Utility tests
+@pytest.mark.repeat(100)
+def test_gene_copy(ascii_gene: GenericGene[str], random_seed: int):
+    new_gene = copy(ascii_gene)
+    assert new_gene == ascii_gene, f"Test failed with seed {random_seed}"
+    # FIXME: AssertionError: Test failed with seed -31
+
+
+# endregion
 # region : Parameters
 @pytest.fixture
 def binary_gene(random_seed: int, binary_alphabet: Dict[bool, int]) -> GenericGene[int]:
@@ -42,7 +55,7 @@ def binary_gene(random_seed: int, binary_alphabet: Dict[bool, int]) -> GenericGe
 
 
 @pytest.fixture
-def ascii_gene(random_seed: int, ascii_alphabet: Dict[bool, int]) -> GenericGene[int]:
+def ascii_gene(random_seed: int, ascii_alphabet: Dict[bool, str]) -> GenericGene[str]:
     return GenericGene(ascii_alphabet, rng=random.Random(random_seed))
 
 
