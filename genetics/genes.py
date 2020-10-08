@@ -22,12 +22,12 @@ class GenericGene(Generic[DNA]):
     __dna: DNA
     __key: str
 
-    def __init__(self, alphabet: Dict[Any, DNA], key: str = "",
+    def __init__(self, alphabet: Dict[Any, DNA], key=None,
                  rng: random.Random = random.Random()):
         """ Creates a random gene from a DNA alphabet.  """
         if alphabet:
             self.__alphabet = alphabet
-            self.__key = key if key else rng.choice(list(alphabet.keys()))
+            self.__key = key if key is not None else rng.choice(list(alphabet.keys()))
             try:
                 self.__dna = alphabet[self.__key]
             except KeyError:

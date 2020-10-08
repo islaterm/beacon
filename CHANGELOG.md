@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.108`` Fixed copy gene
 - ``1.0-B.107`` Implemented test for gene copy (failing test) 
 - ``1.0-B.206`` Tested ASCII chromosome
 - ``1.0-B.205`` Fixed binary chromosome creation

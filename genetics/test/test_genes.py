@@ -44,7 +44,6 @@ def test_ascii_gene(ascii_gene: GenericGene[str], ascii_alphabet: Dict[bool, str
 def test_gene_copy(ascii_gene: GenericGene[str], random_seed: int):
     new_gene = copy(ascii_gene)
     assert new_gene == ascii_gene, f"Test failed with seed {random_seed}"
-    # FIXME: AssertionError: Test failed with seed -31
 
 
 # endregion
