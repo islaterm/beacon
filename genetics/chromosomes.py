@@ -79,7 +79,7 @@ class GenericChromosome(Generic[DNA]):
         number_of_cuts = random.randint(0, max_cuts)
         mixing_points = [random.randint(0, max_cuts) for _ in range(0, number_of_cuts)]
         mixing_points.sort()
-        offsprings = (self.__copy__(), other.__copy__())    # FIXME: There's a bug here!
+        offsprings = (self.__copy__(), other.__copy__())
         i = 0
         start = 0
         while i < len(mixing_points):

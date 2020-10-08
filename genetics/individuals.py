@@ -5,7 +5,6 @@ Creative Commons Attribution 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
-from copy import copy
 from typing import Callable, List, Tuple
 
 from genetics.chromosomes import GenericChromosome
@@ -45,13 +44,10 @@ class Individual:
         while i < len(cut_points):
             end = cut_points[i]
             for chromosome_idx in range(start, end):
-                new_chromosomes = self.__genotype[chromosome_idx].crossover(other.__genotype[chromosome_idx])
-                if i % 2 == 0:
-                    offspring_1.append(copy(other.__genotype[chromosome_idx]))
-                    offspring_2.append(copy(self.__genotype[chromosome_idx]))
-                else:
-                    offspring_1.append(copy(self.__genotype[chromosome_idx]))
-                    offspring_2.append(copy(other.__genotype[chromosome_idx]))
+                new_chromosomes = self.__genotype[chromosome_idx].crossover(
+                    other.__genotype[chromosome_idx])
+                offspring_1.append(new_chromosomes[0])
+                offspring_2.append(new_chromosomes[1])
             i += 1
         return self.__init__(offspring_1, self.__mutation_rate,
                              self.__fitness_function), self.__init__(offspring_2,
