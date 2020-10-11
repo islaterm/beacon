@@ -1,3 +1,5 @@
+import string
+
 from genetics.chromosomes import GenericChromosome
 
 
@@ -10,7 +12,7 @@ def value_error():
 
 
 if __name__ == '__main__':
-    alphabet = {True: 1, False: 0}
+    alphabet = dict([n for n in enumerate(string.ascii_letters)])
     c1 = GenericChromosome(10, alphabet)
     print(f"C1: {c1}")
     c2 = GenericChromosome(8, alphabet)

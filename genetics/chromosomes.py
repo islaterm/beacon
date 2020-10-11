@@ -64,6 +64,9 @@ class GenericChromosome(Generic[DNA]):
     def __str__(self):
         return str(self.__genes)
 
+    def __getitem__(self, item: int) -> GenericGene:
+        return self.__genes[item]
+
     # endregion
     def crossover(self, other: 'GenericChromosome') \
             -> Tuple['GenericChromosome', 'GenericChromosome']:
@@ -75,22 +78,31 @@ class GenericChromosome(Generic[DNA]):
         Returns:
             A pair with the offsprings generated in the crossover.
         """
-        max_cuts = min(self.__size, other.__size)
-        number_of_cuts = random.randint(0, max_cuts)
+        max_cuts = min(self.__size, other.__size)  # Determines the maximum number of cut points
+        number_of_cuts = random.randint(0, max_cuts)  # Choose a random number of cut points
         mixing_points = [random.randint(0, max_cuts) for _ in range(0, number_of_cuts)]
         mixing_points.sort()
+        return self.__crossover_at(mixing_points, other)
+
+    def __crossover_at(self, cut_points: List[int], other: 'GenericChromosome') \
+            -> Tuple['GenericChromosome', 'GenericChromosome']:
+        """
+        Performs a crossover with another chromosome at the given cut points.
+
+        Returns:
+            A pair with the generated offsprings.
+        """
+        # Starts the offspring as copies of their parents
         offsprings = (self.__copy__(), other.__copy__())
         i = 0
         start = 0
-        while i < len(mixing_points):
-            end = mixing_points[i]
+        while i < len(cut_points):  # While there's still cut points left
+            end = cut_points[i]
             for gene_idx in range(start, end):
-                if i % 2 == 0:
-                    offsprings[0][gene_idx] = copy(other.__genes[gene_idx])
-                    offsprings[1][gene_idx] = copy(self.__genes[gene_idx])
-                else:
-                    offsprings[0][gene_idx] = copy(self.__genes[gene_idx])
-                    offsprings[1][gene_idx] = copy(other.__genes[gene_idx])
+                offsprings[0][gene_idx] = copy(other.__genes[gene_idx] if i % 2 == 0
+                                               else self.__genes[gene_idx])
+                offsprings[1][gene_idx] = copy(self.__genes[gene_idx] if i % 2 == 0
+                                               else other.__genes[gene_idx])
             start = end
             i += 1
         return offsprings

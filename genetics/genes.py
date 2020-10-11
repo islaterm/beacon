@@ -65,3 +65,4 @@ class GenericGene(Generic[DNA]):
         other.__key = self.__key
         other.__alphabet = self.__alphabet
     # endregion
+
