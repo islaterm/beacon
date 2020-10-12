@@ -8,6 +8,7 @@ work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 from typing import Callable, List, Tuple
 
 from genetics.chromosomes import GenericChromosome
+from genetics.utils import generate_cut_points
 
 
 class Individual:
@@ -23,20 +24,15 @@ class Individual:
         self.__mutation_rate = mutation_rate
         self.__fitness = self.__update_fitness()
 
-    def crossover(self, other: 'Individual', cut_points: List[int]) \
-            -> Tuple['Individual', 'Individual']:
+    def crossover(self, other: 'Individual') -> Tuple['Individual', 'Individual']:
         """
-        Performs a k-point crossover with another individual.
+        Performs a random k-point crossover with another individual.
 
-        Args:
-            other:
-                the individual used for the crossover
-            cut_points:
-                the points to do the crossover
         Returns:
-
+            a pair with the new individuals.
         """
-        cut_points.sort()
+        # Determines the maximum number of cut points
+        cut_points = generate_cut_points(self, other)
         offspring_1 = []
         offspring_2 = []
         i = 0

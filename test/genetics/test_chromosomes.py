@@ -1,6 +1,7 @@
 import random
 import string
 import unittest
+from copy import copy
 from random import Random
 from typing import Dict
 
@@ -8,6 +9,18 @@ import pytest
 
 from genetics.chromosomes import GenericChromosome, GenotypeException
 from genetics.genes import GenericGene
+
+
+@pytest.mark.repeat(16)
+def test_basic_operations(ascii_chromosome: GenericChromosome, ascii_alphabet: Dict[int, str],
+                          random_seed: int) -> None:
+    gene = GenericGene(ascii_alphabet)
+    idx = random.Random(random_seed).randint(0, len(ascii_chromosome))
+    print(idx)
+    ascii_chromosome[idx] = gene
+    assert ascii_chromosome[idx] == gene
+
+    # genes = str(ascii_chromosome.genes)
 
 
 def test_empty_chromosome(binary_alphabet: Dict) -> None:
@@ -35,6 +48,15 @@ def test_ascii_chromosome(ascii_alphabet: Dict, ascii_chromosome: GenericChromos
     rng = Random(random_seed)
     expected_chromosome = GenericChromosome(chromosome_size, ascii_alphabet, rng)
     assert expected_chromosome == ascii_chromosome
+
+
+@pytest.mark.repeat(16)
+def test_chromosome_copy(binary_chromosome: GenericChromosome,
+                         ascii_chromosome: GenericChromosome) -> None:
+    binary_chromosome_copy = copy(binary_chromosome)
+    assert binary_chromosome == binary_chromosome_copy
+    ascii_chromosome_copy = copy(ascii_chromosome)
+    assert ascii_chromosome == ascii_chromosome_copy
 
 
 @pytest.fixture()

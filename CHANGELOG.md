@@ -2,6 +2,8 @@
 
 ## Version 1.0
 
+- ``1.0-B.209`` Chromosome copy test
+- ``1.0-B.109`` Removed unnecessary copy to method
 - ``1.0-B.208`` Fixed chromosome crossover bug
 - ``1.0-B.207`` Updated crossover method
 - ``1.0-B.108`` Fixed copy gene

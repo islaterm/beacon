@@ -23,6 +23,12 @@ def test_empty_gene(empty_alphabet_error_msg: str) -> None:
         assert empty_alphabet_error_msg in dna_error.value
 
 
+def test_wrong_key(binary_alphabet: Dict[bool, int], wrong_key_error_msg: str) -> None:
+    with pytest.raises(DNAException) as dna_error:
+        _ = GenericGene(binary_alphabet, key="A")
+        assert wrong_key_error_msg in dna_error.value
+
+
 @pytest.mark.repeat(8)
 def test_binary_gene(binary_gene: GenericGene[int], binary_alphabet: Dict[bool, int],
                      random_seed: int) -> None:
@@ -73,11 +79,19 @@ def ascii_alphabet() -> Dict[int, str]:
     return dict([n for n in enumerate(string.ascii_letters)])
 
 
-# endregion
-
+# region : Error messages
 @pytest.fixture
 def empty_alphabet_error_msg() -> str:
     return "Alphabet cannot be empty."
+
+
+@pytest.fixture
+def wrong_key_error_msg(binary_alphabet: Dict[bool, int]) -> str:
+    return f"A is not part of the alphabet {binary_alphabet}"
+
+
+# endregion
+# endregion
 
 
 if __name__ == '__main__':
