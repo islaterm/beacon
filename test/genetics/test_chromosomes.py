@@ -20,7 +20,8 @@ def test_basic_operations(ascii_chromosome: GenericChromosome, ascii_alphabet: D
     ascii_chromosome[idx] = gene
     assert ascii_chromosome[idx] == gene
 
-    # genes = str(ascii_chromosome.genes)
+    genes_str = str(ascii_chromosome.genes)
+    assert str(ascii_chromosome) == genes_str
 
 
 def test_empty_chromosome(binary_alphabet: Dict) -> None:

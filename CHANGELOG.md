@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.210`` Chromosome str test
 - ``1.0-B.209`` Chromosome copy test
 - ``1.0-B.109`` Removed unnecessary copy to method
 - ``1.0-B.208`` Fixed chromosome crossover bug
