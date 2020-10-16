@@ -29,7 +29,18 @@ class GenericChromosome(Generic[DNA]):
     def __init__(self, size: int, alphabet: Dict[Any, DNA], rng: Random = Random(),
                  genes: Optional[List[GenericGene[DNA]]] = None) -> None:
         """
-        Creates a new chromosome from a list of genes generated from an alphabet.
+        Creates a new chromosome with genes of type ``DNA``.
+
+        Args:
+            size:
+                the length of the chromosome.
+            alphabet:
+                the domain of the genes.
+            rng:
+                a random number generator.
+            genes:
+                the list of genes of the chromosome (to create a new chromosome from an existing
+                one).
         """
         self.__alphabet = alphabet
         self.__rng = rng
@@ -42,6 +53,7 @@ class GenericChromosome(Generic[DNA]):
                                     f"Actual: {len(self.__genotype)}")
 
     def mutate(self, mutation_rate: float) -> None:
+        """Mutates the chromosome according to it's mutation rate."""
         for gene_idx in range(0, self.__size):
             if self.__rng.random() < mutation_rate:
                 self.__genotype[gene_idx] = GenericGene(self.__alphabet)
@@ -92,13 +104,12 @@ class GenericChromosome(Generic[DNA]):
 
 
 class ChromosomeFactory(Generic[DNA]):
-    """
-    A factory to ease the creation of chromosomes.
-    """
+    """A factory to ease the creation of chromosomes."""
 
     def __init__(self, alphabet: Dict[Any, DNA], max_size: Optional[int]):
         """
         Initializes a new factory.
+
         Args:
             alphabet:
                 the alphabet from which the chromosome genes are going to be created.
@@ -109,7 +120,5 @@ class ChromosomeFactory(Generic[DNA]):
         self.__max_size = max_size if max_size > 0 else sys.maxsize
 
     def make(self) -> GenericChromosome[DNA]:
-        """
-        Returns a new chromosome.
-        """
+        """Returns a new chromosome."""
         return GenericChromosome(self.__max_size, self.__alphabet)
