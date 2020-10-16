@@ -7,7 +7,7 @@ work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 from typing import Callable, List, Tuple
 
-from genetics.genotype.chromosomes import GenericChromosome
+from genetics.genotype.chromosomes import ChromosomeFactory, GenericChromosome
 from genetics.utils import create_offsprings
 
 FitnessFunction = Callable[['Individual'], float]
@@ -63,7 +63,18 @@ class Individual:
 
 
 class IndividualFactory:
-    """"""
+    """A factory to ease the creation of new individuals."""
+
+    def __init__(self, mutation_rate: float, fitness_function: FitnessFunction,
+                 chromosome_factories: ChromosomeFactory):
+        """
+        Initializes a new factory.
+
+        Args:
+            mutation_rate:
+            fitness_function:
+            chromosome_factories:
+        """
 
 
 class Population:
