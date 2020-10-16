@@ -6,6 +6,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
+from copy import copy
 from typing import List
 
 
@@ -15,3 +16,20 @@ def generate_cut_points(self, other) -> List[int]:
     mixing_points = [random.randint(0, max_cuts) for _ in range(0, number_of_cuts)]
     mixing_points.sort()
     return mixing_points
+
+
+def create_offsprings(self, other):
+    cut_points = generate_cut_points(self, other)
+    offsprings = (self.__copy__(), other.__copy__())
+    i = 0
+    start = 0
+    while i < len(cut_points):  # While there's still cut points left
+        end = cut_points[i]
+        for index in range(start, end):
+            offsprings[0][index] = copy(other.__genotype[index] if i % 2 == 0
+                                        else self.__genotype[index])
+            offsprings[1][index] = copy(self.__genotype[index] if i % 2 == 0
+                                        else other.__genotype[index])
+        start = end
+        i += 1
+    return offsprings

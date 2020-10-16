@@ -11,11 +11,11 @@ from genetics.chromosomes import GenericChromosome, GenotypeException
 from genetics.genes import GenericGene
 
 
-@pytest.mark.repeat(16)
+@pytest.mark.repeat(32)
 def test_basic_operations(ascii_chromosome: GenericChromosome, ascii_alphabet: Dict[int, str],
                           random_seed: int) -> None:
     gene = GenericGene(ascii_alphabet)
-    idx = random.Random(random_seed).randint(0, len(ascii_chromosome))
+    idx = random.Random(random_seed).randint(0, len(ascii_chromosome) - 1)
     print(idx)
     ascii_chromosome[idx] = gene
     assert ascii_chromosome[idx] == gene
@@ -76,7 +76,7 @@ def ascii_chromosome(ascii_alphabet: Dict[bool, int], chromosome_size: int,
 
 @pytest.fixture()
 def chromosome_size():
-    return random.randint(0, 100)
+    return random.randint(1, 100)
 
 
 @pytest.fixture()
