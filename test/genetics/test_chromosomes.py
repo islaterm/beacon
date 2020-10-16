@@ -7,8 +7,8 @@ from typing import Dict
 
 import pytest
 
-from genetics.chromosomes import GenericChromosome, GenotypeException
-from genetics.genes import GenericGene
+from genetics.genotype.chromosomes import GenericChromosome, GenotypeException
+from genetics.genotype.genes import GenericGene
 
 
 @pytest.mark.repeat(32)

@@ -13,7 +13,7 @@ from typing import Dict
 
 import pytest
 
-from genetics.genes import DNAException, GenericGene
+from genetics.genotype.genes import DNAException, GenericGene
 
 
 # region : Constructor tests

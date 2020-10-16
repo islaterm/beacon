@@ -7,18 +7,20 @@ work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 from typing import Callable, List, Tuple
 
-from genetics.chromosomes import GenericChromosome
+from genetics.genotype.chromosomes import GenericChromosome
 from genetics.utils import create_offsprings
+
+FitnessFunction = Callable[['Individual'], float]
 
 
 class Individual:
     __fitness: float
-    __fitness_function: Callable[['Individual'], float]
+    __fitness_function: FitnessFunction
     __genotype: List[GenericChromosome]
     __mutation_rate: float
 
     def __init__(self, chromosomes: List[GenericChromosome], mutation_rate: float,
-                 fitness_function: Callable[['Individual'], float]) -> None:
+                 fitness_function: FitnessFunction) -> None:
         self.__genotype = chromosomes
         self.__fitness_function = fitness_function
         self.__mutation_rate = mutation_rate
@@ -58,3 +60,16 @@ class Individual:
     def __setitem__(self, index: int, value: GenericChromosome) -> None:
         self.__genotype[index] = value
     # endregion
+
+
+class IndividualFactory:
+    """"""
+
+
+class Population:
+    """
+    A population is a set of individuals that can evolve over time.
+    """
+
+    def __init__(self, size: int, individual_factory: IndividualFactory):
+        """"""

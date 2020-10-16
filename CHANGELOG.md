@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.401`` Chromosome factory
 - ``1.0-B.301`` Implemented individuals
 - ``1.0-B.210`` Chromosome str test
 - ``1.0-B.209`` Chromosome copy test

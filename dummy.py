@@ -1,6 +1,6 @@
 import string
 
-from genetics.chromosomes import GenericChromosome
+from genetics.genotype.chromosomes import GenericChromosome
 
 
 def not_implemented():

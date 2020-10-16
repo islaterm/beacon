@@ -5,11 +5,12 @@ Creative Commons Attribution 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
+import sys
 from copy import copy
 from random import Random
 from typing import Any, Dict, Generic, List, Optional, Tuple
 
-from genetics.genes import DNA, GenericGene
+from genetics.genotype.genes import DNA, GenericGene
 from genetics.utils import create_offsprings
 
 
@@ -88,3 +89,27 @@ class GenericChromosome(Generic[DNA]):
         return copy(self.__genotype)
 
     # endregion
+
+
+class ChromosomeFactory(Generic[DNA]):
+    """
+    A factory to ease the creation of chromosomes.
+    """
+
+    def __init__(self, alphabet: Dict[Any, DNA], max_size: Optional[int]):
+        """
+        Initializes a new factory.
+        Args:
+            alphabet:
+                the alphabet from which the chromosome genes are going to be created.
+            max_size:
+                the maximum length of the chromosome.
+        """
+        self.__alphabet = alphabet
+        self.__max_size = max_size if max_size > 0 else sys.maxsize
+
+    def make(self) -> GenericChromosome[DNA]:
+        """
+        Returns a new chromosome.
+        """
+        return GenericChromosome(self.__max_size, self.__alphabet)
