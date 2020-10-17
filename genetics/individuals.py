@@ -64,17 +64,31 @@ class Individual:
 
 class IndividualFactory:
     """A factory to ease the creation of new individuals."""
+    __factories: List[ChromosomeFactory]
+    __fitness_function: FitnessFunction
+    __mutation_rate: float
 
     def __init__(self, mutation_rate: float, fitness_function: FitnessFunction,
-                 chromosome_factories: ChromosomeFactory):
+                 chromosome_factories: List[ChromosomeFactory]):
         """
         Initializes a new factory.
 
         Args:
             mutation_rate:
+                the probability to mutate the chromosomes of the individual.
             fitness_function:
+                the function to be optimized.
             chromosome_factories:
+                a list of factories to create the chromosomes of the individual.
         """
+        self.__factories = chromosome_factories
+        self.__fitness_function = fitness_function
+        self.__mutation_rate = mutation_rate
+
+    def make(self) -> Individual:
+        """Creates a new individual."""
+        genotype = [factory.make() for factory in self.__factories]
+        return Individual(genotype, self.__mutation_rate, self.__fitness_function)
 
 
 class Population:
