@@ -4,12 +4,22 @@ from typing import List
 from genetics.individuals import Individual, IndividualFactory
 
 
+class PopulationError(Exception):
+    """Error raised when an operation on the population is invalid."""
+
+    def __init__(self, cause: str):
+        super(PopulationError, self).__init__(cause)
+
+
 class Population:
     """A population is a set of individuals that can evolve over time."""
     __individuals: List[Individual]
 
     def __init__(self, size: int, individual_factory: IndividualFactory):
         """Creates a population of a given size using a factory to create the individuals."""
+        if size < 2:
+            raise PopulationError(
+                f"Invalid size {size}. The population must have at least 2 individuals")
         self.__individuals = [individual_factory.make() for _ in range(0, size)]
         self.__individuals.sort()
 

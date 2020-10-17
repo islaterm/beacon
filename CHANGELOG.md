@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.406`` Wrong population init test fixtures
 - ``1.0-B.405`` Population evolution
 - ``1.0-B.404`` Population constructor
 - ``1.0-B.403`` Factory for individuals
