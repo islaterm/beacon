@@ -54,6 +54,10 @@ class Individual:
     def __len__(self) -> int:
         return len(self.__genotype)
 
+    def __lt__(self, other: 'Individual') -> bool:
+        """Compares this individual with another according to their fitness."""
+        return self.__fitness < other.__fitness
+
     def __copy__(self) -> 'Individual':
         return Individual(self.__genotype, self.__mutation_rate, self.__fitness_function)
 
@@ -89,12 +93,3 @@ class IndividualFactory:
         """Creates a new individual."""
         genotype = [factory.make() for factory in self.__factories]
         return Individual(genotype, self.__mutation_rate, self.__fitness_function)
-
-
-class Population:
-    """
-    A population is a set of individuals that can evolve over time.
-    """
-
-    def __init__(self, size: int, individual_factory: IndividualFactory):
-        """"""

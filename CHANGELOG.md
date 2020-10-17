@@ -2,6 +2,8 @@
 
 ## Version 1.0
 
+- ``1.0-B.405`` Population evolution
+- ``1.0-B.404`` Population constructor
 - ``1.0-B.403`` Factory for individuals
 - ``1.0-B.402`` Fixed chromosome creation in chromosome factory
 - ``1.0-B.401`` Chromosome factory
