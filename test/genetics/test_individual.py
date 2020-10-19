@@ -17,6 +17,7 @@ from genetics.genotype.chromosomes import ChromosomeFactory
 from genetics.individuals import Individual, IndividualFactory
 
 
+@pytest.mark.repeat(16)
 def test_factory_init(individual_factory: IndividualFactory, random_seed: int,
                       binary_factory: ChromosomeFactory[int],
                       ascii_factory: ChromosomeFactory[str]) -> None:

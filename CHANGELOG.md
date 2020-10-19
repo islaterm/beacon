@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.503`` Individual factory equals implementation
 - ``1.0-B.502`` Individual factory init test
 - ``1.0-B.501`` Individual factory test skeleton
 - ``1.0-B.410`` Chromosome factory make test
