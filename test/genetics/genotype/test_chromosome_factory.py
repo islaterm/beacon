@@ -35,7 +35,6 @@ def test_factory_make(chromosome_factory: ChromosomeFactory[str], chromosome_siz
 @pytest.fixture
 def chromosome_factory(ascii_alphabet: Dict[int, str], chromosome_size: int, random_seed) \
         -> ChromosomeFactory[str]:
-    """"""
     return ChromosomeFactory(ascii_alphabet, chromosome_size, rng=Random(random_seed))
 
 
