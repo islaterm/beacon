@@ -107,7 +107,7 @@ class GenericChromosome(Generic[DNA]):
 class ChromosomeFactory(Generic[DNA]):
     """A factory to ease the creation of chromosomes."""
 
-    def __init__(self, alphabet: Dict[Any, DNA], max_size: Optional[int]):
+    def __init__(self, alphabet: Dict[Any, DNA], max_size: int = sys.maxsize):
         """
         Initializes a new factory.
 
