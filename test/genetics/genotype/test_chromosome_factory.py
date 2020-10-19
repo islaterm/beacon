@@ -5,5 +5,16 @@ Creative Commons Attribution 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
+import unittest
 
-ALL = ["test_chromosome_factory", "test_chromosomes", "test_genes"]
+
+def test_factory_init():
+    assert False
+
+
+def test_factory_make():
+    assert False
+
+
+if __name__ == '__main__':
+    unittest.main()

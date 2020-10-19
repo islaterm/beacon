@@ -10,6 +10,7 @@ from genetics.individuals import Individual, IndividualFactory
 from genetics.population import Population, PopulationError
 
 
+@pytest.mark.repeat(10)
 def test_wrong_population(invalid_size: int, individual_factory: IndividualFactory):
     with pytest.raises(PopulationError) as error:
         _ = Population(invalid_size, individual_factory)
