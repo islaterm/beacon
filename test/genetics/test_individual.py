@@ -26,21 +26,36 @@ def test_factory_init(individual_factory: IndividualFactory, random_seed: int,
     assert individual_factory == expected_factory
 
 
-def test_factory_make() -> None:
-    assert False
+def test_factory_make(individual_factory: IndividualFactory, mutation_rate: float,
+                      ascii_alphabet: Dict[int, str], binary_alphabet: Dict[bool, int],
+                      random_seed: int) -> None:
+    chromosome_size = Random(random_seed).randint(1, 50)
+    expected_genotype = [
+        ChromosomeFactory(ascii_alphabet, chromosome_size, rng=Random(random_seed)).make(
+            chromosome_size),
+        ChromosomeFactory(binary_alphabet, chromosome_size, rng=Random(random_seed)).make(
+            chromosome_size)]
+    expected_individual = Individual(expected_genotype, mutation_rate, fitness_function)
+    actual_individual = individual_factory.make(chromosome_size)
+    assert actual_individual == expected_individual
 
 
 @pytest.fixture()
-def individual_factory(random_seed: int, binary_factory: ChromosomeFactory,
+def individual_factory(mutation_rate: float, binary_factory: ChromosomeFactory,
                        ascii_factory: ChromosomeFactory) -> IndividualFactory:
-    return IndividualFactory(Random(random_seed).random(), fitness_function,
-                             [binary_factory, ascii_factory])
+    return IndividualFactory(mutation_rate, fitness_function,
+                             [ascii_factory, binary_factory])
+
+
+@pytest.fixture()
+def mutation_rate(random_seed: int) -> float:
+    return Random(random_seed).random()
 
 
 @pytest.fixture
 def binary_factory(binary_alphabet: Dict[bool, int], chromosome_size: int, random_seed) \
         -> ChromosomeFactory[int]:
-    return ChromosomeFactory(ascii_alphabet, chromosome_size, rng=Random(random_seed))
+    return ChromosomeFactory(binary_alphabet, chromosome_size, rng=Random(random_seed))
 
 
 @pytest.fixture

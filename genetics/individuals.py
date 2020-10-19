@@ -89,9 +89,9 @@ class IndividualFactory:
         self.__fitness_function = fitness_function
         self.__mutation_rate = mutation_rate
 
-    def make(self) -> Individual:
+    def make(self, size: int = 0) -> Individual:
         """Creates a new individual."""
-        genotype = [factory.make() for factory in self.__factories]
+        genotype = [factory.make(size) for factory in self.__factories]
         return Individual(genotype, self.__mutation_rate, self.__fitness_function)
 
     def __eq__(self, other: 'IndividualFactory') -> bool:
