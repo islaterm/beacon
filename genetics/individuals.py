@@ -5,6 +5,7 @@ Creative Commons Attribution 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
+from copy import copy
 from typing import Callable, List, Tuple
 
 from genetics.genotype.chromosomes import ChromosomeFactory, GenericChromosome
@@ -50,6 +51,10 @@ class Individual:
     def fitness(self) -> float:
         return self.__fitness
 
+    @property
+    def genotype(self) -> List[GenericChromosome]:
+        return copy(self.__genotype)
+
     # region : Built-ins
     def __len__(self) -> int:
         return len(self.__genotype)
@@ -63,6 +68,9 @@ class Individual:
 
     def __setitem__(self, index: int, value: GenericChromosome) -> None:
         self.__genotype[index] = value
+
+    def __str__(self) -> str:
+        return str([str(chromosome) for chromosome in self.__genotype])
     # endregion
 
 
