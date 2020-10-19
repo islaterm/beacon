@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.409`` Chromosome factory init test
 - ``1.0-B.408`` Chromosome factory test skeleton
 - ``1.0-B.407`` Wrong population init test
 - ``1.0-B.406`` Wrong population init test fixtures
