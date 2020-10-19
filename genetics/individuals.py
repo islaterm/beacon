@@ -95,4 +95,7 @@ class IndividualFactory:
         return Individual(genotype, self.__mutation_rate, self.__fitness_function)
 
     def __eq__(self, other: 'IndividualFactory') -> bool:
-        """"""
+        return isinstance(other, IndividualFactory) \
+               and self.__factories == other.__factories \
+               and self.__fitness_function == other.__fitness_function \
+               and self.__mutation_rate == other.__mutation_rate
