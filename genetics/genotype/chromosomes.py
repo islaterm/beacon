@@ -91,6 +91,9 @@ class GenericChromosome(Generic[DNA]):
     def __str__(self):
         return str(self.__genotype)
 
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def __getitem__(self, item: int) -> GenericGene:
         return self.__genotype[item]
 
@@ -107,11 +110,13 @@ class GenericChromosome(Generic[DNA]):
 class ChromosomeFactory(Generic[DNA]):
     """A factory to ease the creation of chromosomes."""
 
-    def __init__(self, alphabet: Dict[Any, DNA], max_size: int = sys.maxsize):
+    def __init__(self, alphabet: Dict[Any, DNA], max_size: int = sys.maxsize,
+                 rng=Random()):
         """
         Initializes a new factory.
 
         Args:
+            rng:
             alphabet:
                 the alphabet from which the chromosome genes are going to be created.
             max_size:
@@ -119,10 +124,12 @@ class ChromosomeFactory(Generic[DNA]):
         """
         self.__alphabet = alphabet
         self.__max_size = max_size if max_size > 0 else sys.maxsize
+        self.__rng = rng
 
-    def make(self) -> GenericChromosome[DNA]:
+    def make(self, size: int = 0) -> GenericChromosome[DNA]:
         """Returns a new chromosome."""
-        return GenericChromosome(random.randint(0, self.__max_size), self.__alphabet)
+        return GenericChromosome(size if size > 0 else random.randint(0, self.__max_size),
+                                 self.__alphabet, rng=self.__rng)
 
     def __eq__(self, other: 'ChromosomeFactory') -> bool:
         return isinstance(other,

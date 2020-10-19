@@ -46,7 +46,7 @@ def test_ascii_gene(ascii_gene: GenericGene[str], ascii_alphabet: Dict[bool, str
 # endregion
 
 # region : Utility tests
-@pytest.mark.repeat(100)
+@pytest.mark.repeat(32)
 def test_gene_copy(ascii_gene: GenericGene[str], random_seed: int):
     new_gene = copy(ascii_gene)
     assert new_gene == ascii_gene, f"Test failed with seed {random_seed}"

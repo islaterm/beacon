@@ -42,20 +42,22 @@ def test_size_mismatch_chromosome(binary_alphabet: Dict, size_mismatch_error_msg
         assert size_mismatch_error_msg in genotype_error.value
 
 
-@pytest.mark.repeat(100)
+@pytest.mark.repeat(32)
 def test_binary_chromosome(binary_alphabet: Dict, binary_chromosome: GenericChromosome,
                            chromosome_size: int, random_seed: int) -> None:
     rng = Random(random_seed)
     expected_chromosome = GenericChromosome(chromosome_size, binary_alphabet, rng)
     assert expected_chromosome == binary_chromosome
+    assert expected_chromosome.__repr__() == binary_chromosome.__repr__()
 
 
-@pytest.mark.repeat(100)
+@pytest.mark.repeat(32)
 def test_ascii_chromosome(ascii_alphabet: Dict, ascii_chromosome: GenericChromosome,
                           chromosome_size: int, random_seed: int) -> None:
     rng = Random(random_seed)
     expected_chromosome = GenericChromosome(chromosome_size, ascii_alphabet, rng)
     assert expected_chromosome == ascii_chromosome
+    assert expected_chromosome.__repr__() == ascii_chromosome.__repr__()
 
 
 @pytest.mark.repeat(16)
