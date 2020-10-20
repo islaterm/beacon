@@ -25,7 +25,7 @@ class Individual:
         self.__genotype = chromosomes
         self.__fitness_function = fitness_function
         self.__mutation_rate = mutation_rate
-        self.__update_fitness()
+        self.__fitness = self.__fitness_function(self)
 
     def crossover(self, other: 'Individual') -> Tuple['Individual', 'Individual']:
         """
@@ -34,6 +34,9 @@ class Individual:
         Returns:
             a pair with the new individuals.
         """
+        offsprings: Tuple[Individual, Individual] = create_offsprings(self, other)
+        offsprings[0].__fitness = self.__fitness_function(offsprings[0])
+        offsprings[1].__fitness = self.__fitness_function(offsprings[1])
         return create_offsprings(self, other)
 
     def mutate(self) -> None:
@@ -44,8 +47,8 @@ class Individual:
             chromosome.mutate(self.__mutation_rate)
         self.__update_fitness()
 
-    def __update_fitness(self) -> None:
-        self.__fitness = self.__fitness_function(self)
+    def __update_fitness(self) -> float:
+        return self.__fitness_function(self)
 
     @property
     def fitness(self) -> float:
@@ -61,7 +64,7 @@ class Individual:
 
     def __lt__(self, other: 'Individual') -> bool:
         """Compares this individual with another according to their fitness."""
-        return self.__fitness < other.__fitness
+        return self.fitness < other.fitness
 
     def __copy__(self) -> 'Individual':
         return Individual(self.__genotype, self.__mutation_rate, self.__fitness_function)
@@ -70,7 +73,11 @@ class Individual:
         self.__genotype[index] = value
 
     def __str__(self) -> str:
-        return str([str(chromosome) for chromosome in self.__genotype])
+        return f"fitness: {self.__fitness} " \
+               f"{str([str(chromosome) for chromosome in self.__genotype])}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
     # endregion
 
 
