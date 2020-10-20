@@ -1,5 +1,4 @@
 import string
-import sys
 import unittest
 from random import Random, randint
 from typing import Dict
@@ -11,6 +10,11 @@ from genetics.individuals import Individual, IndividualFactory
 from genetics.population import Population, PopulationError
 
 
+def fitness_function(_: Individual) -> float:
+    return 0
+
+
+# region : Tests
 @pytest.mark.repeat(16)
 def test_wrong_population(invalid_size: int, individual_factory: IndividualFactory):
     with pytest.raises(PopulationError) as error:
@@ -27,28 +31,27 @@ def test_population_init(population: Population, population_size: int, mutation_
     assert population == expected_population
 
 
-@pytest.fixture()
-def population_size() -> int:
-    return Random(random_seed).randint(1, sys.maxsize)
+# endregion
 
-
+# region : fixtures
 @pytest.fixture()
 def population(population_size: int, individual_factory: IndividualFactory) -> Population:
     return Population(population_size, individual_factory)
 
 
 @pytest.fixture()
-def individual_factory(mutation_rate: float) -> IndividualFactory:
-    return IndividualFactory(mutation_rate, fitness_function, ascii_chromosome_factory)
+def population_size() -> int:
+    return Random(random_seed).randint(2, 4)
 
 
-def fitness_function(_: Individual) -> float:
-    return 0
+@pytest.fixture()
+def individual_factory(mutation_rate: float,
+                       ascii_chromosome_factory: ChromosomeFactory[str]) -> IndividualFactory:
+    return IndividualFactory(mutation_rate, fitness_function, [ascii_chromosome_factory])
 
 
 @pytest.fixture()
 def ascii_chromosome_factory(ascii_alphabet: Dict[int, str]) -> ChromosomeFactory[str]:
-    """"""
     return ChromosomeFactory(ascii_alphabet)
 
 
@@ -77,6 +80,8 @@ def invalid_size(random_seed):
 def random_seed():
     return randint(1, 100)
 
+
+# endregion
 
 if __name__ == '__main__':
     unittest.main()

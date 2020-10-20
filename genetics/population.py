@@ -52,9 +52,15 @@ class Population:
         """Gets the n fittest individuals of the population."""
         return self.__individuals[-n:]
 
+    # region : Utility
+    def __eq__(self, other: 'Population') -> bool:
+        return isinstance(other, Population) and self.__individuals == other.__individuals
+
     def __len__(self) -> int:
         """The size of the population."""
         return len(self.__individuals)
+
+    # endregion
 
     @property
     def individuals(self) -> List[Individual]:

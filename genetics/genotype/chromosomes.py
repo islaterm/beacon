@@ -6,7 +6,6 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
-import sys
 from copy import copy
 from random import Random
 from typing import Any, Dict, Generic, List, Optional, Tuple
@@ -110,7 +109,7 @@ class GenericChromosome(Generic[DNA]):
 class ChromosomeFactory(Generic[DNA]):
     """A factory to ease the creation of chromosomes."""
 
-    def __init__(self, alphabet: Dict[Any, DNA], max_size: int = sys.maxsize,
+    def __init__(self, alphabet: Dict[Any, DNA], max_size: int = 256,
                  rng=Random()):
         """
         Initializes a new factory.
@@ -123,7 +122,7 @@ class ChromosomeFactory(Generic[DNA]):
                 the maximum length of the chromosome.
         """
         self.__alphabet = alphabet
-        self.__max_size = max_size if max_size > 0 else sys.maxsize
+        self.__max_size = max_size
         self.__rng = rng
 
     def make(self, size: int = 0) -> GenericChromosome[DNA]:
