@@ -42,15 +42,15 @@ class Population:
                 i += 2
             else:
                 # The individual survived :D
-                i += 1
                 offsprings.append(self.__individuals[i])
+                i += 1
         # Assigns the new generation
         self.__individuals = offsprings
         self.__individuals.sort()
 
     def get_fittest(self, n: int) -> List[Individual]:
         """Gets the n fittest individuals of the population."""
-        return self.__individuals[:-n]
+        return self.__individuals[-n:]
 
     def __len__(self) -> int:
         """The size of the population."""

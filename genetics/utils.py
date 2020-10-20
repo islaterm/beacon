@@ -26,10 +26,10 @@ def create_offsprings(self, other):
     while i < len(cut_points):  # While there's still cut points left
         end = cut_points[i]
         for index in range(start, end):
-            offsprings[0][index] = copy(other.__genotype[index] if i % 2 == 0
-                                        else self.__genotype[index])
-            offsprings[1][index] = copy(self.__genotype[index] if i % 2 == 0
-                                        else other.__genotype[index])
+            offsprings[0][index] = copy(other.genotype[index] if i % 2 == 0
+                                        else self.genotype[index])
+            offsprings[1][index] = copy(self.genotype[index] if i % 2 == 0
+                                        else other.genotype[index])
         start = end
         i += 1
     return offsprings
