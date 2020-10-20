@@ -2,6 +2,7 @@
 
 ## Version 1.0
 
+- ``1.0-B.504`` Individual factory make test
 - ``1.0-B.601`` Possible fix of fitness after crossover
 - ``1.0-B.503`` Individual factory equals implementation
 - ``1.0-B.502`` Individual factory init test

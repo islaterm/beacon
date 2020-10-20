@@ -59,6 +59,12 @@ class Individual:
         return copy(self.__genotype)
 
     # region : Built-ins
+    def __eq__(self, other: 'Individual') -> bool:
+        return isinstance(other, Individual) \
+               and self.__mutation_rate == other.__mutation_rate \
+               and self.__fitness_function == other.__fitness_function \
+               and self.__genotype == other.__genotype
+
     def __len__(self) -> int:
         return len(self.__genotype)
 

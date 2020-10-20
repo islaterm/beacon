@@ -22,7 +22,7 @@ def test_factory_init(individual_factory: IndividualFactory, random_seed: int,
                       binary_factory: ChromosomeFactory[int],
                       ascii_factory: ChromosomeFactory[str]) -> None:
     expected_factory = IndividualFactory(Random(random_seed).random(), fitness_function,
-                                         [binary_factory, ascii_factory])
+                                         [ascii_factory, binary_factory])
     assert individual_factory == expected_factory
 
 
