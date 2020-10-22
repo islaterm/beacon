@@ -131,7 +131,7 @@ class ChromosomeFactory(Generic[DNA]):
 
     def make(self, size: int = 0) -> GenericChromosome[DNA]:
         """Returns a new chromosome."""
-        return GenericChromosome(size if size > 0 else self.__rng.randint(0, self.__max_size),
+        return GenericChromosome(size if size > 0 else self.__rng.randint(1, self.__max_size),
                                  self.__alphabet, rng=self.__rng)
 
     def __eq__(self, other: 'ChromosomeFactory') -> bool:

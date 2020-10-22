@@ -2,11 +2,13 @@
 
 ## Version 1.0
 
+- ``1.0.8`` Stack trace reproduction
 - ``1.0.7`` Genetic algorithm population tests
 - ``1.0.6`` Genetic algorithm framework use case
 - ``1.0.1`` Genes implementation
 
 
+- ``1.0.8.1`` Stack trace reproduction first prototype
 - ``1.0.7.3`` Population evolution failing test
 - ``1.0.7.2`` Population init tests
 - ``1.0.6.2`` Population fitness function fixes and use case
