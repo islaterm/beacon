@@ -104,6 +104,9 @@ class GenericChromosome(Generic[DNA]):
     def genes(self) -> List[GenericGene]:
         return copy(self.__genotype)
 
+    @property
+    def dna(self) -> List[DNA]:
+        return [gene.dna for gene in self.__genotype]
     # endregion
 
 

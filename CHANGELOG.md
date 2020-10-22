@@ -7,6 +7,7 @@
 - ``1.0.1`` Genes implementation
 
 
+- ``1.0.7.3`` Population evolution failing test
 - ``1.0.7.2`` Population init tests
 - ``1.0.6.2`` Population fitness function fixes and use case
 - ``1.0.7.1`` Failing test for population init
