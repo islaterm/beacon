@@ -1,3 +1,4 @@
+from copy import copy
 from random import randrange
 from typing import List
 
@@ -41,7 +42,7 @@ class Population:
                 i += 2
             else:
                 # The individual survived :D
-                offsprings.append(self.__individuals[i])
+                offsprings.append(copy(self.__individuals[i]))
                 i += 1
         # Assigns the new generation
         self.__individuals = offsprings

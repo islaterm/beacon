@@ -35,8 +35,6 @@ class Individual:
             a pair with the new individuals.
         """
         offsprings: Tuple[Individual, Individual] = create_offsprings(self, other)
-        offsprings[0].__fitness = self.__fitness_function(offsprings[0])
-        offsprings[1].__fitness = self.__fitness_function(offsprings[1])
         return offsprings
 
     def mutate(self) -> 'Individual':
@@ -47,12 +45,11 @@ class Individual:
         for chromosome_i in range(0, self.__len__()):
             mutated_individual.__genotype[chromosome_i] = self.__genotype[chromosome_i].mutate(
                 self.__mutation_rate)
-        mutated_individual.__fitness = self.__fitness_function(mutated_individual)
         return mutated_individual
 
     @property
     def fitness(self) -> float:
-        return self.__fitness
+        return self.__fitness_function(self)
 
     @property
     def genotype(self) -> List[GenericChromosome]:
