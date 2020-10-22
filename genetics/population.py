@@ -60,6 +60,12 @@ class Population:
         """The size of the population."""
         return len(self.__individuals)
 
+    def __str__(self) -> str:
+        return str(self.__individuals)
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     # endregion
 
     @property

@@ -2,18 +2,20 @@
 
 ## Version 1.0
 
+- ``1.0.7`` Genetic algorithm population tests
 - ``1.0.6`` Genetic algorithm framework use case
 - ``1.0.1`` Genes implementation
 
 
-- ``1.0.6.2``  Population fitness function fixes and use case
-- ``1.0.7.1``  Failing test for population init
-- ``1.0.5.4``  Individual factory make test
-- ``1.0.6.1``  Possible fix of fitness after crossover
-- ``1.0.5.3``  Individual factory equals implementation
-- ``1.0.5.2``  Individual factory init test
-- ``1.0.5.1``  Individual factory test skeleton
-- ``1.0.4.10``  Chromosome factory make test
+- ``1.0.7.2`` Population init tests
+- ``1.0.6.2`` Population fitness function fixes and use case
+- ``1.0.7.1`` Failing test for population init
+- ``1.0.5.4`` Individual factory make test
+- ``1.0.6.1`` Possible fix of fitness after crossover
+- ``1.0.5.3`` Individual factory equals implementation
+- ``1.0.5.2`` Individual factory init test
+- ``1.0.5.1`` Individual factory test skeleton
+- ``1.0.4.10`` Chromosome factory make test
 - ``1.0.4.9`` Chromosome factory init test
 - ``1.0.4.8`` Chromosome factory test skeleton
 - ``1.0.4.7`` Wrong population init test

@@ -17,6 +17,7 @@ def fitness_function(_: Individual) -> float:
 # region : Tests
 @pytest.mark.repeat(16)
 def test_wrong_population(invalid_size: int, individual_factory: IndividualFactory):
+    """Creates a population with an invalid size and checks that it raises a PopulationError."""
     with pytest.raises(PopulationError) as error:
         _ = Population(invalid_size, individual_factory)
         assert expected_wrong_init_error == error
@@ -24,9 +25,10 @@ def test_wrong_population(invalid_size: int, individual_factory: IndividualFacto
 
 @pytest.mark.repeat(16)
 def test_population_init(population: Population, population_size: int, mutation_rate: float,
-                         ascii_chromosome_factory: ChromosomeFactory[str]) -> None:
+                         ascii_alphabet: Dict[int, str], random_seed: int) -> None:
     expected_ind_factory = IndividualFactory(mutation_rate, fitness_function,
-                                             [ascii_chromosome_factory])
+                                             [ChromosomeFactory(ascii_alphabet, max_size=3,
+                                                                rng=Random(random_seed))])
     expected_population = Population(population_size, expected_ind_factory)
     assert population == expected_population
 
@@ -34,6 +36,7 @@ def test_population_init(population: Population, population_size: int, mutation_
 # endregion
 
 # region : fixtures
+#   region : Population
 @pytest.fixture()
 def population(population_size: int, individual_factory: IndividualFactory) -> Population:
     return Population(population_size, individual_factory)
@@ -45,26 +48,28 @@ def population_size() -> int:
 
 
 @pytest.fixture()
+def mutation_rate(random_seed: int) -> float:
+    return Random(random_seed).random()
+
+
+#   endregion
+#   region : Individuals
+@pytest.fixture()
 def individual_factory(mutation_rate: float,
                        ascii_chromosome_factory: ChromosomeFactory[str]) -> IndividualFactory:
     return IndividualFactory(mutation_rate, fitness_function, [ascii_chromosome_factory])
 
 
+#   endregion
+#   region : Chromosomes
 @pytest.fixture()
-def ascii_chromosome_factory(ascii_alphabet: Dict[int, str]) -> ChromosomeFactory[str]:
-    return ChromosomeFactory(ascii_alphabet)
+def ascii_chromosome_factory(ascii_alphabet: Dict[int, str], random_seed: int) \
+        -> ChromosomeFactory[str]:
+    return ChromosomeFactory(ascii_alphabet, max_size=3, rng=Random(random_seed))
 
 
-@pytest.fixture()
-def ascii_alphabet() -> Dict[int, str]:
-    return dict([n for n in enumerate(string.ascii_letters)])
-
-
-@pytest.fixture()
-def mutation_rate(random_seed: int) -> float:
-    return Random(random_seed).random()
-
-
+#   endregion
+#   region : Wrong data
 @pytest.fixture
 def expected_wrong_init_error(invalid_size: int):
     return PopulationError(
@@ -74,6 +79,14 @@ def expected_wrong_init_error(invalid_size: int):
 @pytest.fixture
 def invalid_size(random_seed):
     return Random(random_seed).randint(-10, 1)
+
+
+#   endregion
+
+
+@pytest.fixture()
+def ascii_alphabet() -> Dict[int, str]:
+    return dict([n for n in enumerate(string.ascii_letters)])
 
 
 @pytest.fixture()

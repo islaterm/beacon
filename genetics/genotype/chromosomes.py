@@ -5,7 +5,6 @@ Creative Commons Attribution 4.0 International License.
 You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
-import random
 from copy import copy
 from random import Random
 from typing import Any, Dict, Generic, List, Optional, Tuple
@@ -129,7 +128,7 @@ class ChromosomeFactory(Generic[DNA]):
 
     def make(self, size: int = 0) -> GenericChromosome[DNA]:
         """Returns a new chromosome."""
-        return GenericChromosome(size if size > 0 else random.randint(0, self.__max_size),
+        return GenericChromosome(size if size > 0 else self.__rng.randint(0, self.__max_size),
                                  self.__alphabet, rng=self.__rng)
 
     def __eq__(self, other: 'ChromosomeFactory') -> bool:
