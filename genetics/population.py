@@ -35,9 +35,8 @@ class Population:
                 parents = (tournament_selection(self), tournament_selection(self))
                 it_offsprings = parents[0].crossover(parents[1])
                 # Mutation
-                it_offsprings[0].mutate()
+                it_offsprings = (it_offsprings[0].mutate(), it_offsprings[1].mutate())
                 offsprings.append(it_offsprings[0])
-                it_offsprings[1].mutate()
                 offsprings.append(it_offsprings[1])
                 i += 2
             else:

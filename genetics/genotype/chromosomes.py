@@ -52,11 +52,13 @@ class GenericChromosome(Generic[DNA]):
                                     f"Expected: {size}\n"
                                     f"Actual: {len(self.__genotype)}")
 
-    def mutate(self, mutation_rate: float) -> None:
+    def mutate(self, mutation_rate: float) -> 'GenericChromosome[DNA]':
         """Mutates the chromosome according to it's mutation rate."""
+        new_chromosome = self.__copy__()
         for gene_idx in range(0, self.__size):
             if self.__rng.random() < mutation_rate:
-                self.__genotype[gene_idx] = GenericGene(self.__alphabet)
+                new_chromosome.__genotype[gene_idx] = GenericGene(self.__alphabet)
+        return new_chromosome
 
     def crossover(self, other: 'GenericChromosome') \
             -> Tuple['GenericChromosome', 'GenericChromosome']:

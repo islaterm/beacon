@@ -37,18 +37,18 @@ class Individual:
         offsprings: Tuple[Individual, Individual] = create_offsprings(self, other)
         offsprings[0].__fitness = self.__fitness_function(offsprings[0])
         offsprings[1].__fitness = self.__fitness_function(offsprings[1])
-        return create_offsprings(self, other)
+        return offsprings
 
-    def mutate(self) -> None:
+    def mutate(self) -> 'Individual':
         """
         Mutates this individual according to its mutation rate.
         """
-        for chromosome in self.__genotype:
-            chromosome.mutate(self.__mutation_rate)
-        self.__update_fitness()
-
-    def __update_fitness(self) -> float:
-        return self.__fitness_function(self)
+        mutated_individual = self.__copy__()
+        for chromosome_i in range(0, self.__len__()):
+            mutated_individual.__genotype[chromosome_i] = self.__genotype[chromosome_i].mutate(
+                self.__mutation_rate)
+        mutated_individual.__fitness = self.__fitness_function(mutated_individual)
+        return mutated_individual
 
     @property
     def fitness(self) -> float:
