@@ -1,2 +1,3 @@
-pytest~=6.1.0
-pytest-repeat~=0.8.0
+pytest~=6.1.2
+pytest-repeat~=0.9.1
+genyal~=0.1.11.3

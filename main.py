@@ -1,12 +1,14 @@
 import random
 from inspect import getmembers
-from pprint import pprint
-from typing import Callable, List, Tuple
+from typing import Callable, List
+
+from genyal.engine import GenyalEngine
+from genyal.genotype import GeneFactory
 
 import dummy
 
 
-def generate_population(individuals: int) -> List[List[Tuple[str, Callable]]]:
+def gene_generator():
     """ Generates an initial population of random statements.
 
     :param individuals:
@@ -14,37 +16,31 @@ def generate_population(individuals: int) -> List[List[Tuple[str, Callable]]]:
     :return:
         a list of tuples with the function name and a direct reference to the callable function
     """
-    members = getmembers(dummy)
-    functions = []
-    for member in members:
-        member_val = member[1]
-        if callable(member_val):
-            fun = member_val
-            functions.append((fun.__name__, fun))
-    population = []
-    for _ in range(0, individuals):
-        individual = []
-        while random.random() < 0.75:
-            individual.append(random.choice(functions))
-        population.append(individual)
-    return population
+    funs = filter(callable, [member[1] for member in getmembers(dummy)])
+    return random.choice(list(funs))
 
 
-def get_fitness(statements: List[Tuple[str, Callable]], expected_exeption: Exception):
+def get_fitness(statements: List[Callable]):
     try:
         for call in statements:
-            call[1]()
+            call()
     except Exception as e:
-        return (1 if e.__class__ == expected_exeption.__class__ else 0) + 1 / (10 * len(statements))
+        return 1 if isinstance(e, NotImplementedError) else 0
     return 0
 
 
 if __name__ == '__main__':
-    generated_pop = generate_population(10)
-    expected_error = NotImplementedError()
-    population_fitness = []
-    for ind in generated_pop:
-        population_fitness.append((get_fitness(ind, expected_error), ind))
-    population_fitness.sort(key=lambda i: i[0])
-    print(f"Expected exception: {expected_error.__class__}")
-    pprint(population_fitness[-3:])
+    factory = GeneFactory()
+    factory.generator = gene_generator
+    engine = GenyalEngine(fitness_function=get_fitness)
+    engine.create_population(10, 3, factory)
+    print()
+    #
+    # generated_pop = gene_generator(10)
+    # expected_error = NotImplementedError()
+    # population_fitness = []
+    # for ind in generated_pop:
+    #     population_fitness.append((get_fitness(ind), ind))
+    # population_fitness.sort(key=lambda i: i[0])
+    # print(f"Expected exception: {expected_error.__class__}")
+    # pprint(population_fitness[-3:])
