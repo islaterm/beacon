@@ -4,3 +4,7 @@ def not_implemented():
 
 def value_error():
     raise ValueError()
+
+
+def other_error(arg_1):
+    return arg_1
