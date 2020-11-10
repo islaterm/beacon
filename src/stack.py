@@ -6,7 +6,9 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
-from inspect import getmembers, signature
+import sys
+import traceback
+from inspect import getmembers
 from types import FunctionType
 from typing import Callable, List
 
@@ -21,20 +23,28 @@ class Tracer:
     The job of Tracer is to generate sequences of instructions to replicate a desired stack trace.
     """
     __statements: List[Callable]
-    __target_exception: Exception
+    __target_method: Exception
 
     def __init__(self, module, target):
-        self.__statements = [signature(fun[1]) for fun in
+        self.__statements = [fun[1] for fun in
                              filter(lambda m: isinstance(m[1], FunctionType), getmembers(module))]
-        self.__target_exception = target
+        self.__target_method = target
+        self.__statement_factory = GeneFactory(self)
+        self.__statement_factory.generator = Tracer.instruction_generator
+        self.__statement_factory.generator_args = (random.Random(), self.__statements)
+        self.__engine = GenyalEngine(fitness_function=Tracer.fitness_function,
+                                     terminating_function=Tracer.run_until)
+        self.__engine.fitness_function_args = (self.__target_method, 10)
 
     @staticmethod
-    def fitness_function(statements: List[Callable], target_exception: Exception) -> float:
+    def fitness_function(statements: List[Callable], method_name: str,
+                         engine: GenyalEngine) -> float:
         try:
             for statement in statements:
                 statement()
         except Exception as e:
-            return 1 if type(e) == target_exception else 0
+            stacktrace = traceback.extract_tb(sys.exc_info()[2])
+            return 1 if method_name == stacktrace[1].name else 0
         return 0
 
     @staticmethod
@@ -47,17 +57,10 @@ class Tracer:
         return engine.fittest.fitness == 1
 
     def run(self) -> None:
-        statement_factory = GeneFactory(self)
-        statement_factory.generator = Tracer.instruction_generator
-        engine = GenyalEngine(fitness_function=Tracer.fitness_function,
-                              terminating_function=Tracer.run_until)
-        engine.fitness_function_args = (self.__target_exception,)
-        engine.factory_generator_args = (random.Random(), self.__statements)
-        engine._GenyalEngine__mutation_args = (self.__statements,)
-        engine.create_population(50, 3, statement_factory)
-        engine.evolve()
-        print(engine.fittest)
+        self.__engine.create_population(50, 3, self.__statement_factory)
+        self.__engine.evolve()
+        print(self.__engine.fittest.genes)
 
 
 if __name__ == '__main__':
-    Tracer(dummy, NotImplementedError).run()
+    Tracer(dummy, "value_error_2").run()
