@@ -6,6 +6,7 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
+from copy import copy
 from inspect import getmembers, signature
 from types import FunctionType
 from typing import Callable, List
@@ -24,9 +25,15 @@ class Tracer:
     __target_exception: Exception
 
     def __init__(self, module, target):
-        self.__statements = [signature(fun[1]) for fun in
+        self.__statements = [fun[1] for fun in
                              filter(lambda m: isinstance(m[1], FunctionType), getmembers(module))]
         self.__target_exception = target
+        self.__statement_factory = GeneFactory(self)
+        self.__statement_factory.generator = Tracer.instruction_generator
+        self.__statement_factory.generator_args = (random.Random(), self.__statements)
+        self.__engine = GenyalEngine(fitness_function=Tracer.fitness_function,
+                                     terminating_function=Tracer.run_until)
+        self.__engine.fitness_function_args = (self.__target_exception,)
 
     @staticmethod
     def fitness_function(statements: List[Callable], target_exception: Exception) -> float:
@@ -46,18 +53,24 @@ class Tracer:
     def run_until(engine: GenyalEngine) -> bool:
         return engine.fittest.fitness == 1
 
+    def __minimize(self):
+        """
+        Reduces the fittest sequence of instructions to the shortest one that raises the exception.
+        """
+        fittest = self.__engine.fittest
+        minimal_test = fittest.genes
+        for instruction in fittest.genes:
+            candidate = copy(minimal_test)
+            candidate.remove(instruction)
+            if Tracer.fitness_function(candidate, self.__target_exception) >= fittest.fitness:
+                minimal_test = candidate
+        return minimal_test
+
     def run(self) -> None:
-        statement_factory = GeneFactory(self)
-        statement_factory.generator = Tracer.instruction_generator
-        engine = GenyalEngine(fitness_function=Tracer.fitness_function,
-                              terminating_function=Tracer.run_until)
-        engine.fitness_function_args = (self.__target_exception,)
-        engine.factory_generator_args = (random.Random(), self.__statements)
-        engine._GenyalEngine__mutation_args = (self.__statements,)
-        engine.create_population(50, 3, statement_factory)
-        engine.evolve()
-        print(engine.fittest)
+        self.__engine.create_population(50, 3, self.__statement_factory)
+        self.__engine.evolve()
+        print(self.__minimize())
 
 
 if __name__ == '__main__':
-    Tracer(dummy, NotImplementedError).run()
+    Tracer(dummy, ValueError).run()

@@ -1,10 +1,15 @@
+a = 0
+
+
 def not_implemented():
     raise NotImplementedError()
 
 
 def value_error():
-    raise ValueError()
+    if a > 1:
+        raise ValueError()
 
 
-def other_error(arg_1):
-    return arg_1
+def other_error():
+    global a
+    a += 1
