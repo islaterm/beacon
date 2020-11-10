@@ -6,30 +6,37 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
-from inspect import getmembers, signature
+import sys
+from importlib import import_module
+from inspect import Signature, getmembers, signature
 from types import FunctionType
 from typing import Callable, List
 
 from genyal.engine import GenyalEngine
 from genyal.genotype import GeneFactory
 
-import dummy
+from src.beacon_types import Integer
+
+Instruction = (str, Callable, Signature)
 
 
 class Tracer:
     """
     The job of Tracer is to generate sequences of instructions to replicate a desired stack trace.
     """
-    __statements: List[Callable]
+    __statements: list[Instruction]
     __target_exception: Exception
 
-    def __init__(self, module, target):
-        self.__statements = [signature(fun[1]) for fun in
-                             filter(lambda m: isinstance(m[1], FunctionType), getmembers(module))]
+    def __init__(self, module_name: str, target):
+        module = import_module(module_name)
+        self.__statements = []
+        for fun in filter(lambda m: isinstance(m[1], FunctionType), getmembers(module)):
+            args = tuple([Integer for _ in signature(fun[1]).parameters])
+            self.__statements.append((fun[0], fun[1], args))
         self.__target_exception = target
 
     @staticmethod
-    def fitness_function(statements: List[Callable], target_exception: Exception) -> float:
+    def fitness_function(statements: List[Instruction], target_exception: Exception) -> float:
         try:
             for statement in statements:
                 statement()
@@ -60,4 +67,4 @@ class Tracer:
 
 
 if __name__ == '__main__':
-    Tracer(dummy, NotImplementedError).run()
+    Tracer("dummy", ValueError).run()
