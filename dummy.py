@@ -1,7 +1,7 @@
-def not_implemented():
-    raise NotImplementedError()
+def foo(i=0):
+    a = [1, 2, 3]
+    return a[i]
 
 
-def value_error(val):
-    if val < 0:
-        raise ValueError("Value can't be negative")
+def foo2():
+    foo(3)

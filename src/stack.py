@@ -6,7 +6,6 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
-import sys
 from importlib import import_module
 from inspect import Signature, getmembers, signature
 from types import FunctionType
@@ -17,7 +16,7 @@ from genyal.genotype import GeneFactory
 
 from src.beacon_types import Integer
 
-Instruction = (str, Callable, Signature)
+Instruction = tuple[str, Callable, Signature]
 
 
 class Tracer:
@@ -31,7 +30,7 @@ class Tracer:
         module = import_module(module_name)
         self.__statements = []
         for fun in filter(lambda m: isinstance(m[1], FunctionType), getmembers(module)):
-            args = tuple([Integer for _ in signature(fun[1]).parameters])
+            args = signature(fun[1])
             self.__statements.append((fun[0], fun[1], args))
         self.__target_exception = target
 
@@ -39,7 +38,7 @@ class Tracer:
     def fitness_function(statements: List[Instruction], target_exception: Exception) -> float:
         try:
             for statement in statements:
-                statement()
+                statement[1]()
         except Exception as e:
             return 1 if type(e) == target_exception else 0
         return 0
@@ -59,12 +58,11 @@ class Tracer:
         engine = GenyalEngine(fitness_function=Tracer.fitness_function,
                               terminating_function=Tracer.run_until)
         engine.fitness_function_args = (self.__target_exception,)
-        engine.factory_generator_args = (random.Random(), self.__statements)
-        engine._GenyalEngine__mutation_args = (self.__statements,)
+        statement_factory.generator_args = (random.Random(), self.__statements)
         engine.create_population(50, 3, statement_factory)
         engine.evolve()
         print(engine.fittest)
 
 
 if __name__ == '__main__':
-    Tracer("dummy", ValueError).run()
+    Tracer("dummy", IndexError).run()
