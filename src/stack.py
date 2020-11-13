@@ -8,6 +8,8 @@ work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 import random
 from importlib import import_module
 from inspect import Signature, getmembers, signature
+from copy import copy
+from inspect import getmembers, signature
 from types import FunctionType
 from typing import Callable, List
 
@@ -33,6 +35,12 @@ class Tracer:
             args = signature(fun[1])
             self.__statements.append((fun[0], fun[1], args))
         self.__target_exception = target
+        self.__statement_factory = GeneFactory(self)
+        self.__statement_factory.generator = Tracer.instruction_generator
+        self.__statement_factory.generator_args = (random.Random(), self.__statements)
+        self.__engine = GenyalEngine(fitness_function=Tracer.fitness_function,
+                                     terminating_function=Tracer.run_until)
+        self.__engine.fitness_function_args = (self.__target_exception,)
 
     @staticmethod
     def fitness_function(statements: List[Instruction], target_exception: Exception) -> float:
@@ -52,6 +60,19 @@ class Tracer:
     def run_until(engine: GenyalEngine) -> bool:
         return engine.fittest.fitness == 1
 
+    def __minimize(self):
+        """
+        Reduces the fittest sequence of instructions to the shortest one that raises the exception.
+        """
+        fittest = self.__engine.fittest
+        minimal_test = fittest.genes
+        for instruction in fittest.genes:
+            candidate = copy(minimal_test)
+            candidate.remove(instruction)
+            if Tracer.fitness_function(candidate, self.__target_exception) >= fittest.fitness:
+                minimal_test = candidate
+        return minimal_test
+
     def run(self) -> None:
         statement_factory = GeneFactory(self)
         statement_factory.generator = Tracer.instruction_generator
@@ -61,7 +82,7 @@ class Tracer:
         statement_factory.generator_args = (random.Random(), self.__statements)
         engine.create_population(50, 3, statement_factory)
         engine.evolve()
-        print(engine.fittest)
+        print(self.__minimize())
 
 
 if __name__ == '__main__':
