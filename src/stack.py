@@ -74,14 +74,8 @@ class Tracer:
         return minimal_test
 
     def run(self) -> None:
-        statement_factory = GeneFactory(self)
-        statement_factory.generator = Tracer.instruction_generator
-        engine = GenyalEngine(fitness_function=Tracer.fitness_function,
-                              terminating_function=Tracer.run_until)
-        engine.fitness_function_args = (self.__target_exception,)
-        statement_factory.generator_args = (random.Random(), self.__statements)
-        engine.create_population(50, 3, statement_factory)
-        engine.evolve()
+        self.__engine.create_population(50, 3, self.__statement_factory)
+        self.__engine.evolve()
         print(self.__minimize())
 
 
