@@ -6,19 +6,19 @@ You should have received a copy of the license along with this
 work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 """
 import random
-from importlib import import_module
-from inspect import Signature, getmembers, signature
+import sys
+import traceback
 from copy import copy
-from inspect import getmembers, signature
+from importlib import import_module
+from inspect import getmembers
+from pprint import pprint
 from types import FunctionType
 from typing import Callable, List
 
 from genyal.engine import GenyalEngine
 from genyal.genotype import GeneFactory
 
-from src.beacon_types import Integer
-
-Instruction = tuple[str, Callable, Signature]
+Instruction = tuple[str, Callable]
 
 
 class Tracer:
@@ -32,8 +32,7 @@ class Tracer:
         module = import_module(module_name)
         self.__statements = []
         for fun in filter(lambda m: isinstance(m[1], FunctionType), getmembers(module)):
-            args = signature(fun[1])
-            self.__statements.append((fun[0], fun[1], args))
+            self.__statements.append((fun[0], fun[1]))
         self.__target_exception = target
         self.__statement_factory = GeneFactory(self)
         self.__statement_factory.generator = Tracer.instruction_generator
@@ -44,12 +43,13 @@ class Tracer:
 
     @staticmethod
     def fitness_function(statements: List[Instruction], target_exception: Exception) -> float:
+        fitness = 0
         try:
             for statement in statements:
                 statement[1]()
         except Exception as e:
-            return 1 if type(e) == target_exception else 0
-        return 0
+            fitness += 1 if type(e) == target_exception else 0
+        return fitness
 
     @staticmethod
     def instruction_generator(random_generator: random.Random,
@@ -76,7 +76,16 @@ class Tracer:
     def run(self) -> None:
         self.__engine.create_population(50, 3, self.__statement_factory)
         self.__engine.evolve()
-        print(self.__minimize())
+        instructions = self.__minimize()
+        try:
+            for instruction in instructions:
+                instruction[1]()
+        except Exception as e:
+            exc_info = sys.exc_info()
+            print(exc_info[0])
+            print(f"{exc_info[1]} occurred at functions: \n\t" + '\n\t'.join(
+                [i[0] for i in instructions]))
+            pprint(traceback.extract_tb(exc_info[2]))
 
 
 if __name__ == '__main__':
