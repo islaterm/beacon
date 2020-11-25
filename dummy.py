@@ -1,22 +1,21 @@
 import sys
 import traceback
-from random import random
+from traceback import StackSummary
 
 
-def not_implemented():
-    raise NotImplementedError()
+def foo(i=0):
+    a = [1, 2, 3]
+    return a[i]
 
 
-def value_error():
-    raise ValueError()
-
-
-def value_error_2():
-    if random() > 0.5:
-        raise ValueError()
-    else:
-        raise NotImplementedError()
+def foo2():
+    foo(3)
 
 
 if __name__ == '__main__':
-    value_error()
+    try:
+        foo2()
+    except:
+        stack = sys.exc_info()
+        trace = traceback.extract_tb(sys.exc_info()[-1])
+        print(trace)

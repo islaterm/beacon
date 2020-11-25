@@ -8,40 +8,46 @@ work. If not, see <http://creativecommons.org/licenses/by/4.0/>.
 import random
 import sys
 import traceback
+from copy import copy
+from importlib import import_module
 from inspect import getmembers
+from pprint import pprint
 from types import FunctionType
 from typing import Callable, List
 
 from genyal.engine import GenyalEngine
 from genyal.genotype import GeneFactory
 
-import dummy
+Instruction = tuple[str, Callable]
 
 
 class Tracer:
     """
     The job of Tracer is to generate sequences of instructions to replicate a desired stack trace.
     """
-    __statements: List[Callable]
+    __statements: list[Instruction]
     __target_method: Exception
 
-    def __init__(self, module, target):
-        self.__statements = [fun[1] for fun in
-                             filter(lambda m: isinstance(m[1], FunctionType), getmembers(module))]
-        self.__target_method = target
+    def __init__(self, module_name: str, target):
+        module = import_module(module_name)
+        self.__statements = []
+        for fun in filter(lambda m: isinstance(m[1], FunctionType), getmembers(module)):
+            self.__statements.append((fun[0], fun[1]))
+        self.__target_exception = target
         self.__statement_factory = GeneFactory(self)
         self.__statement_factory.generator = Tracer.instruction_generator
         self.__statement_factory.generator_args = (random.Random(), self.__statements)
         self.__engine = GenyalEngine(fitness_function=Tracer.fitness_function,
                                      terminating_function=Tracer.run_until)
-        self.__engine.fitness_function_args = (self.__target_method, 10)
+        self.__engine.fitness_function_args = (self.__target_exception,)
 
     @staticmethod
-    def fitness_function(statements: List[Callable], method_name: str,
+    def fitness_function(statements: List[Instruction], method_name: str,
                          engine: GenyalEngine) -> float:
+        fitness = 0
         try:
             for statement in statements:
-                statement()
+                statement[1]()
         except Exception as e:
             stacktrace = traceback.extract_tb(sys.exc_info()[2])
             return 1 if method_name == stacktrace[1].name else 0
@@ -56,11 +62,33 @@ class Tracer:
     def run_until(engine: GenyalEngine) -> bool:
         return engine.fittest.fitness == 1
 
+    def __minimize(self):
+        """
+        Reduces the fittest sequence of instructions to the shortest one that raises the exception.
+        """
+        fittest = self.__engine.fittest
+        minimal_test = fittest.genes
+        for instruction in fittest.genes:
+            candidate = copy(minimal_test)
+            candidate.remove(instruction)
+            if Tracer.fitness_function(candidate, self.__target_exception) >= fittest.fitness:
+                minimal_test = candidate
+        return minimal_test
+
     def run(self) -> None:
         self.__engine.create_population(50, 3, self.__statement_factory)
         self.__engine.evolve()
-        print(self.__engine.fittest.genes)
+        instructions = self.__minimize()
+        try:
+            for instruction in instructions:
+                instruction[1]()
+        except Exception as e:
+            exc_info = sys.exc_info()
+            print(exc_info[0])
+            print(f"{exc_info[1]} occurred at functions: \n\t" + '\n\t'.join(
+                [i[0] for i in instructions]))
+            pprint(traceback.extract_tb(exc_info[2]))
 
 
 if __name__ == '__main__':
-    Tracer(dummy, "value_error_2").run()
+    Tracer("dummy", IndexError).run()
