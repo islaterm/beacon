@@ -21,6 +21,7 @@ from genyal.genotype import GeneFactory
 Instruction = tuple[str, Callable]
 
 
+# noinspection PyBroadException
 class Tracer:
     """
     The job of Tracer is to generate sequences of instructions to replicate a desired stack trace.
@@ -80,7 +81,7 @@ class Tracer:
         try:
             for instruction in instructions:
                 instruction[1]()
-        except Exception as e:
+        except Exception:
             exc_info = sys.exc_info()
             print(exc_info[0])
             print(f"{exc_info[1]} occurred at functions: \n\t" + '\n\t'.join(
