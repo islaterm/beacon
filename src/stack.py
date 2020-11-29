@@ -44,6 +44,10 @@ class Tracer:
     @staticmethod
     def fitness_function(statements: List[Instruction], method_name: str,
                          engine: GenyalEngine) -> float:
+        # Exception type
+        # Stack trace length
+        # Exception line
+        # String difference
         fitness = 0
         try:
             for statement in statements:
