@@ -10,7 +10,7 @@ import sys
 import traceback
 from copy import copy
 from importlib import import_module
-from inspect import getmembers
+from inspect import Signature, getmembers, signature
 from pprint import pprint
 from types import FunctionType
 from typing import Callable, List
@@ -18,7 +18,7 @@ from typing import Callable, List
 from genyal.engine import GenyalEngine
 from genyal.genotype import GeneFactory
 
-Instruction = tuple[str, Callable]
+Instruction = tuple[Callable, str, Signature]
 
 
 # noinspection PyBroadException
@@ -33,10 +33,10 @@ class Tracer:
         module = import_module(module_name)
         self.__statements = []
         for fun in filter(lambda m: isinstance(m[1], FunctionType), getmembers(module)):
-            self.__statements.append((fun[0], fun[1]))
+            self.__statements.append((fun[1], fun[0], signature(fun[1])))
         self.__target_exception = target
         self.__statement_factory = GeneFactory(self)
-        self.__statement_factory.generator = Tracer.instruction_generator
+        self.__statement_factory.generator = self.instruction_generator
         self.__statement_factory.generator_args = (random.Random(), self.__statements)
         self.__engine = GenyalEngine(fitness_function=Tracer.fitness_function,
                                      terminating_function=Tracer.run_until)
@@ -47,15 +47,17 @@ class Tracer:
         fitness = 0
         try:
             for statement in statements:
-                statement[1]()
+                statement[0]()
         except Exception as e:
             fitness += 1 if type(e) == target_exception else 0
         return fitness
 
-    @staticmethod
-    def instruction_generator(random_generator: random.Random,
-                              statements: list[tuple[Callable, tuple]]) -> tuple[Callable, tuple]:
-        return random_generator.choice(statements)
+    def instruction_generator(self, random_generator: random.Random,
+                              statements: list[tuple[Callable, str, Signature]]) \
+            -> tuple[Callable, str, tuple]:
+        statement = random_generator.choice(statements)
+        params = [self.__new_value() for _ in statement[2].parameters]
+        return statement[0], statement[1], tuple(params)
 
     @staticmethod
     def run_until(engine: GenyalEngine) -> bool:
@@ -63,7 +65,7 @@ class Tracer:
 
     def __minimize(self):
         """
-        Reduces the fittest sequence of instructions to the shortest one that raises the exception.
+        Reduces the fittest sequence of instructions to the shortest one which raises the exception.
         """
         fittest = self.__engine.fittest
         minimal_test = fittest.genes
@@ -80,14 +82,22 @@ class Tracer:
         instructions = self.__minimize()
         try:
             for instruction in instructions:
-                instruction[1]()
+                instruction[0]()
         except Exception:
             exc_info = sys.exc_info()
             print(exc_info[0])
             print(f"{exc_info[1]} occurred at functions: \n\t" + '\n\t'.join(
-                [i[0] for i in instructions]))
+                [i[1] for i in instructions]))
             pprint(traceback.extract_tb(exc_info[2]))
+
+    def add_input_type(self, in_type):
+        self.__input_factory.add(in_type)
+
+    def __new_value(self):
+        return self.__input_factory.create()
 
 
 if __name__ == '__main__':
-    Tracer("dummy", IndexError).run()
+    tracer = Tracer("dummy", IndexError)
+    tracer.add_input_type(int)
+    tracer.run()
