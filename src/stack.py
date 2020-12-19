@@ -10,15 +10,17 @@ import sys
 import traceback
 from copy import copy
 from importlib import import_module
-from inspect import Signature, getmembers, signature
+from inspect import getmembers, signature
 from pprint import pprint
 from types import FunctionType
-from typing import Callable, List
+from typing import Any, Callable, List
 
 from genyal.engine import GenyalEngine
 from genyal.genotype import GeneFactory
 
-Instruction = tuple[Callable, str, Signature]
+from src.beacons import InputFactory
+
+Instruction = tuple[Callable, str, dict[str, Any]]
 
 
 # noinspection PyBroadException
@@ -31,9 +33,10 @@ class Tracer:
 
     def __init__(self, module_name: str, target):
         module = import_module(module_name)
+        self.__in_factory = InputFactory()
         self.__statements = []
         for fun in filter(lambda m: isinstance(m[1], FunctionType), getmembers(module)):
-            self.__statements.append((fun[1], fun[0], signature(fun[1])))
+            self.__statements.append((fun[1], fun[0], {}))
         self.__target_exception = target
         self.__statement_factory = GeneFactory(self)
         self.__statement_factory.generator = self.instruction_generator
@@ -47,17 +50,18 @@ class Tracer:
         fitness = 0
         try:
             for statement in statements:
-                statement[0]()
+                statement[0](**statement[2])
         except Exception as e:
             fitness += 1 if type(e) == target_exception else 0
         return fitness
 
     def instruction_generator(self, random_generator: random.Random,
-                              statements: list[tuple[Callable, str, Signature]]) \
-            -> tuple[Callable, str, tuple]:
-        statement = random_generator.choice(statements)
-        params = [self.__new_value() for _ in statement[2].parameters]
-        return statement[0], statement[1], tuple(params)
+                              statements: list[Instruction]) -> Instruction:
+        instruction = random_generator.choice(statements)
+        fn_params = {}
+        for param in signature(instruction[0]).parameters:
+            fn_params[param] = self.__in_factory.get()
+        return instruction[0], instruction[1], fn_params
 
     @staticmethod
     def run_until(engine: GenyalEngine) -> bool:
@@ -82,22 +86,24 @@ class Tracer:
         instructions = self.__minimize()
         try:
             for instruction in instructions:
-                instruction[0]()
+                instruction[0](**instruction[2])
         except Exception:
             exc_info = sys.exc_info()
             print(exc_info[0])
-            print(f"{exc_info[1]} occurred at functions: \n\t" + '\n\t'.join(
-                [i[1] for i in instructions]))
+            for i in instructions:
+                print(f"{exc_info[1]} occurred at functions:")
+                d: dict = i[2]
+                args = [f"{arg[0]} = {arg[1]}" for arg in d.items()]
+                print(f"\t{i[1]}({', '.join(args)})")
             pprint(traceback.extract_tb(exc_info[2]))
 
-    def add_input_type(self, in_type):
-        self.__input_factory.add(in_type)
-
-    def __new_value(self):
-        return self.__input_factory.create()
+    # def add_input_type(self, in_type):
+    #     self.__input_factory.add(in_type)
+    #
+    # def __new_value(self):
+    #     return self.__input_factory.create()
 
 
 if __name__ == '__main__':
-    tracer = Tracer("dummy", IndexError)
-    tracer.add_input_type(int)
+    tracer = Tracer("dummy", AssertionError)
     tracer.run()
