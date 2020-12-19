@@ -10,6 +10,7 @@ import string
 import sys
 from abc import ABC, abstractmethod
 from random import Random
+from typing import Any, Type
 
 
 class BeaconType(ABC):
@@ -52,6 +53,7 @@ class Integer(BeaconType):
     """
 
     """
+
     @classmethod
     def make(cls, lo: int = -sys.maxsize, hi: int = sys.maxsize) -> int:
         return random.randrange(lo, hi)
@@ -68,8 +70,37 @@ arg_types = { int: Integer }
 
 
 class InputFactory:
-    def __init__(self):
-        self.__types = { int: Integer, str: String }
+    __types: dict[Type, Type[BeaconType]]
+    __type_list: list[Type]
+    __constructor_arguments: dict[Type, dict[str, Any]]
 
-    def set(self, in_type, type_constructor):
+    def __init__(self, constructors_args=None):
+        if constructors_args is None:
+            constructors_args = { }
+        self.__types = { int: Integer, str: String }
+        self.__type_list = [int, str]
+        self.__constructor_arguments = constructors_args
+
+    def set(self, in_type: Type, type_constructor: Type[BeaconType]) -> None:
+        """
+        Adds a new type mapping to the factory.
+
+        Args:
+            in_type:
+                the concrete type that's gonna be created with the factory.
+            type_constructor:
+                a class that extends [BeaconType] with a specification of how to create the
+                elements used in [Tracer].
+        """
         self.__types[in_type] = type_constructor
+        self.__type_list.append(in_type)
+
+    def get(self) -> Any:
+        """
+        Returns a new random value generated from the input factory types.
+        """
+        return_type = random.choice(self.__type_list)
+        return self.__types[return_type].make(
+            **(self.__constructor_arguments[
+                   return_type] if return_type in self.__constructor_arguments else { }))
+
