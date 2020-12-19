@@ -8,4 +8,4 @@ def positive_sum(a, b):
 
 
 def is_positive(n):
-    assert n > 0
+    assert n > 0, "n must be positive"
