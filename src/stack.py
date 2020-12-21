@@ -13,14 +13,14 @@ from importlib import import_module
 from inspect import getmembers, signature
 from pprint import pprint
 from types import FunctionType
-from typing import Any, Callable, List, Type
+from typing import Any, Callable, List, Type, Union
 
 from genyal.engine import GenyalEngine
 from genyal.genotype import GeneFactory
 
-from src.beacons import InputFactory
+from src.beacons import InputFactory, Variable
 
-Instruction = tuple[Callable, str, dict[str, Any]]
+Instruction = Union[tuple[Callable, str, dict[str, Any]], Callable]
 
 
 # noinspection PyBroadException
@@ -75,20 +75,23 @@ class Tracer:
                          target_message: str, target_fn: str) -> float:
         fitness = 0
         try:
-            for statement in statements:
-                statement[0](**statement[2])
+            Tracer.execute(statements)
         except target_exception as e:
             exc_info = sys.exc_info()
             stack = traceback.extract_tb(exc_info[2])
             fitness += 2
-            for arg in e.args:
-                fitness += 1 if target_message in arg else 0
+            if not target_message:
+                fitness += 1
+            else:
+                for arg in e.args:
+                    fitness += 1 if target_message in arg else 0
         except Exception:
             exc_info = sys.exc_info()
             stack = traceback.extract_tb(exc_info[2])
         else:
             return 0
-        fitness += 2 if filter(lambda frame: frame.name == target_fn, stack) else 0
+        fitness += 2 if not target_fn or list(
+            filter(lambda frame: frame.name == target_fn, stack)) else 0
         return fitness
 
     def instruction_generator(self, random_generator: random.Random,
@@ -118,29 +121,34 @@ class Tracer:
         return minimal_test
 
     def run(self) -> None:
-        self.__engine.create_population(50, 3, self.__statement_factory)
+        self.__engine.create_population(50, 5, self.__statement_factory)
         self.__engine.evolve()
         instructions = self.__minimize()
         try:
-            for instruction in instructions:
-                instruction[0](**instruction[2])
+            Tracer.execute(instructions)
         except Exception:
             exc_info = sys.exc_info()
             print(exc_info[0])
+            print(f"{exc_info[1]} occurred at functions:")
             for i in instructions:
-                print(f"{exc_info[1]} occurred at functions:")
                 d: dict = i[2]
                 args = [f"{arg[0]} = {arg[1]}" for arg in d.items()]
                 print(f"\t{i[1]}({', '.join(args)})")
             pprint(traceback.extract_tb(exc_info[2]))
 
-    # def add_input_type(self, in_type):
-    #     self.__input_factory.add(in_type)
-    #
-    # def __new_value(self):
-    #     return self.__input_factory.create()
+    @staticmethod
+    def execute(statements):
+        results = []
+        for statement in statements:
+            parameters = copy(statement[2])
+            j = len(results)
+            for key, val in parameters.items():
+                if val == Variable:
+                    j -= 1
+                    parameters[key] = results[j]
+            results.append(statement[0](**parameters))
 
 
 if __name__ == '__main__':
-    tracer = Tracer("dummy", AssertionError, "n must be positive", "positive_sum")
+    tracer = Tracer("dummy", AssertionError)
     tracer.run()

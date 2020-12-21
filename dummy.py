@@ -8,4 +8,9 @@ def positive_sum(a, b):
 
 
 def is_positive(n):
-    assert n > 0, "n must be positive"
+    return n > 0
+
+
+def error_if_true(p):
+    if isinstance(p, bool) and p:
+        raise AssertionError()

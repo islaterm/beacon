@@ -66,6 +66,13 @@ class String(BeaconType):
         return "".join([random.choice(characters) for _ in range(min_len, str_len)])
 
 
+class Variable(BeaconType):
+
+    @classmethod
+    def make(cls):
+        return cls
+
+
 arg_types = { int: Integer }
 
 
@@ -77,8 +84,8 @@ class InputFactory:
     def __init__(self, constructors_args=None):
         if constructors_args is None:
             constructors_args = { }
-        self.__types = { int: Integer, str: String }
-        self.__type_list = [int, str]
+        self.__types = { int: Integer, str: String, Variable: Variable }
+        self.__type_list = [int, str, Variable]
         self.__constructor_arguments = constructors_args
 
     def set(self, in_type: Type, type_constructor: Type[BeaconType]) -> None:
@@ -103,4 +110,3 @@ class InputFactory:
         return self.__types[return_type].make(
             **(self.__constructor_arguments[
                    return_type] if return_type in self.__constructor_arguments else { }))
-
